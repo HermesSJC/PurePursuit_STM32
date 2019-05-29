@@ -6,6 +6,7 @@
 	*
 	* COPYRIGHT(c) 2019-2020 东南大学-仪器科学与工程学院-石佳晨 (QQ:369348508)
 	*
+	* define 需增加 ARM_MATH_CM7 __CC_ARM 和 __FPU_PRESENT=1 才可以使用硬件FPU进行快速计算
 	*
 	* 跟新日志 -------------------------------------------------------------------
 	*
@@ -38,16 +39,29 @@
 	*
 	* 时间：2019-03-11  版本：3.0.0
 	* 1-使用链表重写路径算法
-	* 2-搭建了双向链表的原型
-	* 3-完成了添加初始路径函数
 	*
+	* 时间：2019-05-14  版本：3.0.1
+	* 1-修复了转向方向判断错误的bug
 	*
+	* 时间：2019-05-16  版本：3.0.2
+	* 1-修复了删除链表时候卡死的bug
+	*
+	* 时间：2019-05-17  版本：3.0.3
+	* 1-修复了平移路径角度单位出错导致平移错误的bug
+	*
+	* 时间：2019-05-22  版本：3.1.0
+	* 1-修复了使用线段算法时,平移路径可能会卡死的bug
+	* 2-修复了删除链表时,剩下一个点没有删除的bug
+	* 3-添加了侧滑预测算法,并兼容之前的算法
   ******************************************************************************
 */
 
 /* Include ------------------------------------------------------------------ */
 
 #include "stracking.h"
+
+#include "usart.h"
+#include "main.h"
 
 /* Private Variables ---------------------------------------------------------*/
 
@@ -123,7 +137,7 @@ float GetArithmeticSquareRoot(float n1, float n2)
 */
 inline float GetPointAngle(point3d p1, point3d p2)
 {
-	return atan2f(p2.y - p1.y, p2.x - p1.x) * 57.29577951308237971f ;
+	return atan2f(p2.y - p1.y, p2.x - p1.x) * (float)Rad2Degree ;
 }
 
 /**
@@ -265,43 +279,11 @@ bool addInitPoint(point3d p)
 
 		//数据成为2个
 		initPath.nSize = 2;
-	}
-	/* 第三个数据 增加一个结点 同时尾结点的数据移动 */
-	else if (initPath.nSize == 2 && initPath.head->next == initPath.tail && initPath.tail->prev == initPath.head)
-	{
-		//为记录点坐标分配内存空间 分配失败则报错
-		lastPosition = malloc(sizeof(initNode));
-		if (lastPosition == NULL)
-		{
-			return false;
-		}
 		
-		//为数据分配内存 如果分配失败则报错返回 成功则继续
-		temp = malloc(sizeof(initNode));
-		if (temp == NULL)
-		{
-			return false;
-		}
-
-		initPath.head->next = temp;
-
-		temp->prev = initPath.head;
-		temp->point.x = initPath.tail->point.x;
-		temp->point.y = initPath.tail->point.y;
-		temp->point.z = initPath.tail->point.z;
-		temp->next = initPath.tail;
-
-		initPath.tail->prev = temp;
-		initPath.tail->point.x = p.x;
-		initPath.tail->point.y = p.y;
-		initPath.tail->point.z = p.z;
-		
-		//记录下当前位置的地址
-		lastPosition = temp;
-
-		initPath.nSize = 3;
+		//上一个位置的指针指向头节点
+		lastPosition = initPath.head;
 	}
-	/* 第四个以及以后的数据 */
+	/* 第三个以及以后的数据 */
 	else
 	{
 		//为数据分配内存 如果分配失败则报错返回 成功则继续
@@ -311,28 +293,29 @@ bool addInitPoint(point3d p)
 			return false;
 		}		
 		
-		//读取上一个结点的位置
+		//增加一个新的结点
 		lastPosition->next = temp;
-
-		//连接数据
+		
+		//尾结点的数据放在倒数第二个结点
 		temp->prev = lastPosition;
 		temp->point.x = initPath.tail->point.x;
 		temp->point.y = initPath.tail->point.y;
 		temp->point.z = initPath.tail->point.z;
 		temp->next = initPath.tail;
-
-		initPath.tail->prev = temp;
+		
+		//坐标赋值
 		initPath.tail->point.x = p.x;
 		initPath.tail->point.y = p.y;
 		initPath.tail->point.z = p.z;
-
-		//记录下当前位置的地址
-		lastPosition = temp;
-
+		initPath.tail->prev = temp;
+		
 		//数据数量自增一次
 		initPath.nSize++;
+		
+		//上一个位置的指针指向上一个位置
+		lastPosition = temp;
+		
 	}
-	
 	return true;
 }
 
@@ -385,16 +368,18 @@ void clearInitPath(void)
 {
 	initNode *head;
 	initNode *temp;
-
-	head = initPath.head;
-
-	for (uint16_t i = 0; i < initPath.nSize; i++)
+	
+	head = initPath.head->next;
+	temp = head->next;
+	
+	do
 	{
-		temp = head->next;
 		head->prev = NULL;
+		head->next = NULL;
 		free(head);
 		head = temp;
-	}
+		temp = head->next;
+	}while(temp->next != initPath.tail);
 
 	//设置头结点
 	initPath.head->prev = NULL;
@@ -413,6 +398,61 @@ void clearInitPath(void)
 	//设置点的个数
 	initPath.nSize = 0;
 }
+
+/**
+* @name:				debugPrintInitPath
+* @brief:				输出初始路径
+* @in:					无
+* @out:					无
+* @retval:			无
+* @reviseTime:	2018-04-22
+*/
+void debugPrintInitPath(void)
+{
+	initNode * head;
+	head = initPath.head;
+	
+	uint16_t i = 1;
+	printf("init path:\r\n");
+	printf("from head to tail:\r\n");
+	do
+	{	
+		printf("point %3d is (%.4f, %.4f, %.4f)\r\n",i, head->point.x, head->point.y, head->point.z);
+		i++;
+		head = head->next;
+		
+	}while(head->next != NULL);
+	
+	initNode *tail;
+	tail = initPath.tail;
+	
+	i = 1;
+	printf("\r\nfrom tail to head:\r\n");
+	do
+	{
+		printf("point %3d is (%.4f, %.4f, %.4f)\r\n",i, tail->point.x, tail->point.y, tail->point.z);
+		i++;
+		tail = tail->prev;
+		
+	}while(tail->prev != NULL);
+}
+
+/**
+* @name:				debugPrintInitPath
+* @brief:				输出参考路径
+* @in:					无
+* @out:					无
+* @retval:			无
+* @reviseTime:	2018-04-22
+*/
+void debugPrintReferencePath(void)
+{
+	for(uint16_t i = 0; i < referencePath.nSize; i++)
+	{
+		printf("point %3d is (%.4f, %.4f, %.4f)\r\n",i, (referencePath.point + i)->x, (referencePath.point + i)->y, (referencePath.point + i)->z );
+	}
+}
+
 
 /**
 * @name:				changeCourseAngle
@@ -445,7 +485,7 @@ __inline float changeCourseAngle(float angle)
 void JWG2ENU(double j, double w, double g, point3d *p)
 {
 	//坐标转换的系数矩阵
-	static double dTransforMatrix[3][3] = { 0.0 };
+	static double dTransforMatrix[3][3] = {{0.0}};
 	//ecef0的坐标系的数值
 	static double ecefx0 = 0.0, ecefy0 = 0.0, ecefz0 = 0.0;
 
@@ -608,7 +648,6 @@ uint8_t GenerateReferencePath(point3d p, float headingAngle)
 	float x00 = 0.0f, y00 = 0.0f, z00 = 0.0f;
 	float fHeadingAngleError = 0.0f;
 	float fReferenceHeadingAngle = 0.0;
-	uint8_t nReferencePointNum = 0;
 
 	// 0 | 判断有没有足够的点
 	//线段
@@ -633,7 +672,7 @@ uint8_t GenerateReferencePath(point3d p, float headingAngle)
 
 	// 2 | 根据初始路径重新分配地址
 	//根据追踪方法分配空间大小
-	nReferencePointNum = (isLineArithmeticFlag == false )? initPath.nSize / nSamplePointNum : 2 ;
+	uint16_t nReferencePointNum = (isLineArithmeticFlag == false )? initPath.nSize/nSamplePointNum : 2 ;
 	//根据个数分配内存 如果分配失败则报错 成功则继续
 	referencePath.point = malloc(nReferencePointNum * sizeof(point3d));
 	if (referencePath.point == NULL)
@@ -642,24 +681,28 @@ uint8_t GenerateReferencePath(point3d p, float headingAngle)
 	}
 
 	// 3 | 计算角度之间的差距
-	fReferenceHeadingAngle = atan2f(initPath.tail->point.y - initPath.head->point.y, initPath.tail->point.x - initPath.head->point.x);
+	//参考角度 (-180, 180]
+	fReferenceHeadingAngle = atan2f(initPath.tail->point.y - initPath.head->point.y, initPath.tail->point.x - initPath.head->point.x)*(float)Rad2Degree;
+	//航向角 (0, 360]
 	fHeadingAngleError = headingAngle - fReferenceHeadingAngle;
-	fHeadingAngleError = (fHeadingAngleError > 180.0f) ? fHeadingAngleError - 360.0f : ((fHeadingAngleError <= -180.0f) ? fHeadingAngleError + 360.0f : fHeadingAngleError);
+	//航向误差 转换到(-180, 180]
+	fHeadingAngleError = (fHeadingAngleError >= 180.0f) ? fHeadingAngleError - 360.0f : ((fHeadingAngleError < -180.0f) ? fHeadingAngleError + 360.0f : fHeadingAngleError);
 
 	// 4 | 平移路径
 	//线段
 	if (isLineArithmeticFlag == false)
 	{
-		uint16_t i;
+		uint16_t i = 0;
 		//航向角差距不大 按照第一个平移
-		if (-90.0f <= fHeadingAngleError && fHeadingAngleError < 90.0f)
+		if ( -90.0f <= fHeadingAngleError && fHeadingAngleError < 90.0f)
 		{
 			//获取第一个点的位置
 			initNode * head = initPath.head;
 			x00 = p.x - head->point.x;
 			y00 = p.y - head->point.y;
 			z00 = p.z - head->point.z;
-			for (i = 0; i < initPath.nSize; i++)
+			
+			do
 			{
 				//每隔nSamplePointNum 取点
 				if (i % nSamplePointNum == 0)
@@ -668,7 +711,7 @@ uint8_t GenerateReferencePath(point3d p, float headingAngle)
 				}
 				//到下一个点
 				head = head->next;
-			}
+			}while(head->next != NULL);
 		}
 		//差距比较大则按照最后一个平移
 		else
@@ -678,7 +721,8 @@ uint8_t GenerateReferencePath(point3d p, float headingAngle)
 			x00 = p.x - tail->point.x;
 			y00 = p.y - tail->point.y;
 			z00 = p.z - tail->point.z;
-			for (i = 0; i < initPath.nSize; i++)
+	
+			do
 			{
 				//每隔nSamplePointNum 取点
 				if (i % nSamplePointNum == 0)
@@ -687,7 +731,7 @@ uint8_t GenerateReferencePath(point3d p, float headingAngle)
 				}
 				//到前一个点
 				tail = tail->prev;
-			}
+			}while(tail->prev != NULL);
 		}
 	}
 	//直线
@@ -721,198 +765,240 @@ uint8_t GenerateReferencePath(point3d p, float headingAngle)
 /**
 * @name:				autoRunPurePursuit
 * @brief:				模型预测控制追踪路径
-* @in:					当前点p[point3d] | 速度speed[float] | 航向角headingAngle[float]
+* @in:					当前点p[point3d] | 速度speed[float] | 航向角headingAngle[float] | 侧滑角slipingAngle[float] | 当前转向弧度presentWheelSteeringRadian[float] 
 * @out:					控制命令[command] | 追踪状态[trackStatus]
 * @retval:			追踪情况[uint8_t]
-* @reviseTime:	2019-03-13
+* @reviseTime:	2019-05-29
 */
-uint8_t autoRunPurePursuit(point3d p, float speed, float headingAngle, command* info, trackStatus* status)
+uint8_t autoRunPurePursuit(point3d p, float speed, float headingAngle, float slipingAngle, float presentWheelSteeringRadian, command* info, trackStatus* status)
 {
-	//定义当前点和下一个点
-	point3d presPoint, nextPoint;
-	//定义当前参考点的距离和下一个参考点的距离
-	float fPresDistance, fNextDistance;
-	//定义参考线段
-	lineInfo referenceLine;
-	//定义横向误差
-	float fLateralError;
-	//定义角度误差
-	float fHeadingAngleError;
-	//定义参考线段的航向角
-	float fReferenceLineAngle, fReferenceLineLength = 0.0f;
-	//定义瞄准的角度和瞄准线段的长度
-	float fAimPointAngle;
-	//定义前视距离
-	float fLookAheadDistance;
-	//定义期望前轮转向角
-	float fWheelSteeringAngle;
-	//定义转向半径
-	static float fTurningRadius = 37.5f;
-	//定义延迟时间
-	float fDelayTime;
-	//定义延迟时间的航向角变化
-	float fDelayTimeChangeHeadingRadius;
-	//定义车体坐标系下的变化量
-	float fDelayTimeChangeX, fDelayTimeChangeY;
-	//定义车体坐标系下的坐标值
-	float fBodyX, fBodyY;
-
-#if ( __FPU_PRESENT==1 )
-	static float fSqrtOut = 0.0f;
-	static float fsinOut = 0.0f, fcosOut = 0.0f;
+	//定义转向半径  ##在k时刻需要k-1时刻的转向半径
+	static float fTurningRadius;
+#ifdef SLIP_ENABLE
+	//定义上一个时刻的航向角
+	static float fPrevTimeHeadingAngle;
+	//定义上一个时刻的x坐标和y坐标
+	static float fPrevTimeX, fPrevTimeY;
 #endif
-
-	/*  0 | 移动路径 */
+	
+	
+	/*  0 | 判断是否移动路径 */
 	if(isFirstMoveFlag == true)
 	{
 		isFirstMoveFlag = false;
-		uint8_t res = GenerateReferencePath(p,headingAngle);
+		uint8_t res = GenerateReferencePath(p, headingAngle);
 		if(res != TRACKING_STATUS_NORMAL)
 		{
+			status->fHeadingAngleError = 0.0f;
+			status->fLateralError = 0.0f;
+			info->nDirection = DIRECTION_STATUS_MID;
+			info->nWheelSteeringAngle = 0;
 			return res;
 		}
+		//k-1时刻的转向半径定义为很大 当作直线行驶
+		fTurningRadius = 1.0e5f;
+#ifdef SLIP_ENABLE
+		//用当前时刻的点当作k-1时刻的点 否则第一次一定会被判定产生侧滑
+		fPrevTimeX = p.x;
+		fPrevTimeY = p.y;
+#endif
 	}
-
-	/*  1 | 确定当前要追踪的两个点的数据 以及是否到底*/
-	//如果是直线追踪
-	if (isLineArithmeticFlag == true)
+	
+	/*  1 | 确定当前要追踪的两个点的数据 以及是否到底 */
+	//定义当前追踪路径的两个端点
+	point3d prevPoint, nextPoint;
+	//直线追踪
+	if(isLineArithmeticFlag == true)
 	{
 		//直线追踪只需要2个点
 		//第一个点
-		presPoint.x = (referencePath.point + 0)->x;
-		presPoint.y = (referencePath.point + 0)->y;
-		presPoint.z = (referencePath.point + 0)->z;
-		fPresDistance = GetArithmeticSquareRoot(p.x - presPoint.x, p.y - presPoint.y);
-
+		prevPoint.x = (referencePath.point + 0)->x;
+		prevPoint.y = (referencePath.point + 0)->y;
+		prevPoint.z = (referencePath.point + 0)->z;
+		
 		//第二个点
 		nextPoint.x = (referencePath.point + (referencePath.nSize - 1))->x;
 		nextPoint.y = (referencePath.point + (referencePath.nSize - 1))->y;
 		nextPoint.z = (referencePath.point + (referencePath.nSize - 1))->z;
-		fNextDistance = GetArithmeticSquareRoot(p.x - nextPoint.x, p.y - nextPoint.y);
-
-		//计算路线长度
-		fReferenceLineLength = GetArithmeticSquareRoot(presPoint.x - nextPoint.x, presPoint.y - nextPoint.y);
-		//判断是否结束
-		if (fPresDistance > fReferenceLineLength)
+		
+		//计算参考路线的长度
+		float fReferenceLineLength = GetArithmeticSquareRoot(prevPoint.x - nextPoint.x, prevPoint.y - nextPoint.y);
+		//计算和前一个端点的距离
+		float fPrevDistance = GetArithmeticSquareRoot(p.x - prevPoint.x, p.y - prevPoint.y);
+		
+		//利用三角形的边长定律 当最长边被切换时 说明直线追踪到底了 返回结束
+		if (fPrevDistance >= fReferenceLineLength)
 		{
+			status->fHeadingAngleError = 0.0f;
+			status->fLateralError = 0.0f;
+			info->nDirection = DIRECTION_STATUS_MID;
+			info->nWheelSteeringAngle = 0;
 			return TRACKING_STATUS_TO_THE_END;
 		}
 	}
 	//线段追踪
 	else
 	{
-		// 下标没越界 判断是否需要切换参考点
+		//下标没越界 说明还没到底 提取两个端点的值
 		if (nReferencePointIndex + 1 <= referencePath.nSize - 1)
 		{
-			//线段追踪需要不停的变换点
 			//前一个点
-			presPoint.x = (referencePath.point + nReferencePointIndex)->x;
-			presPoint.y = (referencePath.point + nReferencePointIndex)->y;
-			presPoint.z = (referencePath.point + nReferencePointIndex)->z;
+			prevPoint.x = (referencePath.point + nReferencePointIndex)->x;
+			prevPoint.y = (referencePath.point + nReferencePointIndex)->y;
+			prevPoint.z = (referencePath.point + nReferencePointIndex)->z;
 			//到前一个点的距离
-			fPresDistance = GetArithmeticSquareRoot(p.x - presPoint.x, p.y - presPoint.y);
+			float fPresDistance = GetArithmeticSquareRoot(p.x - prevPoint.x, p.y - prevPoint.y);
 
 			//后一个点
 			nextPoint.x = (referencePath.point + (nReferencePointIndex + 1))->x;
 			nextPoint.y = (referencePath.point + (nReferencePointIndex + 1))->y;
 			nextPoint.z = (referencePath.point + (nReferencePointIndex + 1))->z;
 			//到后一个点的距离
-			fNextDistance = GetArithmeticSquareRoot(p.x - nextPoint.x, p.y - nextPoint.y);
-
+			float fNextDistance = GetArithmeticSquareRoot(p.x - nextPoint.x, p.y - nextPoint.y);
+			
 			//如果离当前点的距离大于下个点，切换参考点
 			if (fPresDistance > fNextDistance)
 			{
 				nReferencePointIndex++;
-
+				
 				//如果切换了越界,就说明倒底部了
 				if (nReferencePointIndex + 1 == referencePath.nSize)
 				{
+					status->fHeadingAngleError = 0.0f;
+					status->fLateralError = 0.0f;
+					info->nDirection = DIRECTION_STATUS_MID;
+					info->nWheelSteeringAngle = 0;
 					return TRACKING_STATUS_TO_THE_END;
 				}
 				//没有的话 重新定位点
-				presPoint.x = (referencePath.point + nReferencePointIndex)->x;
-				presPoint.y = (referencePath.point + nReferencePointIndex)->y;
-				presPoint.z = (referencePath.point + nReferencePointIndex)->z;
+				prevPoint.x = (referencePath.point + nReferencePointIndex)->x;
+				prevPoint.y = (referencePath.point + nReferencePointIndex)->y;
+				prevPoint.z = (referencePath.point + nReferencePointIndex)->z;
 
 				nextPoint.x = (referencePath.point + (nReferencePointIndex + 1))->x;
 				nextPoint.y = (referencePath.point + (nReferencePointIndex + 1))->y;
-				nextPoint.z = (referencePath.point + (nReferencePointIndex + 1))->z;
+				nextPoint.z = (referencePath.point + (nReferencePointIndex + 1))->z;				
 			}
 		}
-		//如果下标越界 肯定是到底了
-		else
-		{
-			return TRACKING_STATUS_TO_THE_END;
-		}
 	}
-
-	/* 2 | 改进型纯追踪算法进行路径追踪 */
+	
+//如果硬件FPU可以使用 则使用硬件fpu计算一些信息
+#if( __FPU_PRESENT == 1)
+	float fSinValue, fCosValue;
+	float fSqrtOut;
+#endif
+	
+	/*  3 | 改进型纯追踪算法计算期望转向角信息 */
 	/** -------------------------------- 滞后性预测及调整 -------------------------------- **/
-	// 2-1-1| 根据速度计算延迟时间
-	fDelayTime = fSpeedFixedFactor + fSpeedAffactedFactor * speed;
-
-	// 2-1-2| 计算延迟时间内到达的新位置 ##使用了上一次的转向半径
-	// 计算航向角的变化
-	fDelayTimeChangeHeadingRadius = speed * fDelayTime / fTurningRadius;
+#ifdef CONTROLDELAY_ENABLE
+	// 根据速度计算延迟时间
+	float fDelayTime = fSpeedFixedFactor + fSpeedAffactedFactor * speed;
+	// 计算在延迟时间内的航向角的变化 这里是k-1时刻的转向半径
+	float fDelayTimeChangeHeadingRadian = speed * fDelayTime / fTurningRadius;
 #if ( __FPU_PRESENT==1 )
 	//计算车体坐标系的值
-	fBodyX = fTurningRadius * (1 - arm_cos_f32(fDelayTimeChangeHeadingRadius));
-	fBodyY = fTurningRadius * arm_sin_f32(fDelayTimeChangeHeadingRadius);
-
+	float fBodyX = fTurningRadius * (1 - arm_cos_f32(fDelayTimeChangeHeadingRadian));
+	float fBodyY = fTurningRadius * arm_sin_f32(fDelayTimeChangeHeadingRadian);
 	//计算车体坐标系下改变的值
-	arm_sin_cos_f32(headingAngle, &fsinOut, &fcosOut);
-	fDelayTimeChangeX = fBodyX * fsinOut + fBodyY * fcosOut;
-	fDelayTimeChangeY = fBodyY * fsinOut - fBodyX * fcosOut;
+	arm_sin_cos_f32(headingAngle, &fSinValue, &fCosValue);
+	float fDelayTimeChangeX = fBodyX * fSinValue + fBodyY * fCosValue;
+	float fDelayTimeChangeY = fBodyY * fSinValue - fBodyX * fCosValue;
 #else
 	//计算车体坐标系的值
-	fBodyX = fTurningRadius * (1 - cosf(fTurningRadius));
-	fBodyY = fTurningRadius * sinf(fTurningRadius);
-
+	fBodyX = fTurningRadius * (1 - cosf(fDelayTimeChangeHeadingRadian));
+	fBodyY = fTurningRadius * sinf(fDelayTimeChangeHeadingRadian);
 	//计算车体坐标系下改变的值
-	fDelayTimeChangeX = fBodyX * sinf(headingAngle) + fBodyY * cosf(headingAngle);
-	fDelayTimeChangeY = fBodyY * sinf(headingAngle) - fBodyX * cosf(headingAngle);
+	float fHeadingRadian = headingAngle * (float)Degree2Rad;
+	float sinH = sinf(fHeadingRadian), cosh = cosf(fHeadingRadian);
+	float fDelayTimeChangeX = fBodyX * sinH + fBodyY * cosH;
+	float fDelayTimeChangeY = fBodyY * sinH - fBodyX * cosH;
+#endif
+	
 #endif
 
-	/** ----------------------------------- 纯追踪算法 ---------------------------------- **/
-	// 2-2 | 计算参考路径角度，计算瞄准角度
-	fReferenceLineAngle = GetPointAngle(presPoint, nextPoint);
-	fAimPointAngle = GetPointAngle(p, nextPoint);
+	/** -------------------------------- 侧滑的预测及调整 -------------------------------- **/
+#ifdef SLIP_ENABLE
+	//预测的理论位置
+#if ( __FPU_PRESENT==1 )
+	arm_sin_cos_f32(fPrevTimeHeadingAngle, &fSinValue, &fCosValue);
+	float fPredictedX = fPrevTimeX + speed*fSamplePeriod*fCosValue;
+	float fPredictedY = fPrevTimeY + speed*fSamplePeriod*fSinValue;
+#else
+	float fPrevTimeHeadingRadian = fPrevTimeHeadingAngle*(float)Degree2Rad;
+	float sinH = sinf(fPrevTimeHeadingRadian), cosH = cosf(fPrevTimeHeadingRadian)
+	float fPredictedX = fPrevTimeX + speed*fSamplePeriod*cosH;
+	float fPredictedY = fPrevTimeY + speed*fSamplePeriod*sinH;
+#endif
+	//期望等效侧滑角
+	float fEquivalentSlipingAngle = 0.0f;
+	//如果距离比较大 判定产生了侧滑 计算等效侧滑角 否则就还是0
+	if(GetArithmeticSquareRoot(p.x - fPredictedX, p.y - fPredictedY) > 0.1f)
+	{
+		//预测的期望航向角
+		float fPredictedHeadingAngle = fPrevTimeHeadingAngle + (speed*fSamplePeriod/fTurningRadius)*(float)(Rad2Degree);
+		//后轮侧滑角
+		float fRearWheelSlipingRadian = (headingAngle - slipingAngle)*(float)Degree2Rad;
+		//前轮侧滑角
+		float fFrontWheelSlipingRadian = (headingAngle - fPredictedHeadingAngle)*(float)Degree2Rad;
+		//计算等效侧滑角
+		fEquivalentSlipingAngle = (1.0f/(1.0f/presentWheelSteeringRadian + 1.0f/(presentWheelSteeringRadian+fRearWheelSlipingRadian) + 1.0f/fFrontWheelSlipingRadian) - presentWheelSteeringRadian)*(float)(Rad2Degree);
+	}
+	//跟新上一个时刻位置 和航向角
+	fPrevTimeX = p.x;
+	fPrevTimeY = p.y;
+	fPrevTimeHeadingAngle = headingAngle;
+#endif
 
-	// 2-3 | 计算角度误差
+	/** ----------------------------------- 纯追踪算法 ----------------------------------- **/
+	//计算参考路径角度 计算瞄准的点的角度
+	float fReferenceLineAngle = GetPointAngle(prevPoint, nextPoint);
+	float fAimPointAngle = GetPointAngle(p, nextPoint);
+	
+	//计算航向角误差
 	headingAngle = (headingAngle > 180.0f) ? headingAngle - 360.0f : ((headingAngle <= -180.0f) ? headingAngle + 360.0f : headingAngle);
-	fHeadingAngleError = fReferenceLineAngle - headingAngle;
-
-	//误差角转换成[-180,180)
+	float fHeadingAngleError = fReferenceLineAngle - headingAngle;
 	fHeadingAngleError = (fHeadingAngleError > 180.0f) ? fHeadingAngleError - 360.0f : ((fHeadingAngleError <= -180.0f) ? fHeadingAngleError + 360.0f : fHeadingAngleError);
-	// 2-4	| 计算横向误差
-	// 2-4-1| 通过2个参考点计算参考线段参数
-	CountLinePara(presPoint, nextPoint, &referenceLine);
-	// 2-4-2| 计算优化以后的点的位置
+	status->fHeadingAngleError = fHeadingAngleError;
+	
+	//计算横向误差
+	//确定参考参考线段的信息
+	lineInfo referenceLine;
+	CountLinePara(prevPoint, nextPoint, &referenceLine);
+	//计算点到直线的距离
+	status->fLateralError = CountPointLineDistance(p, referenceLine);
+	
+#ifdef CONTROLDELAY_ENABLE
+	// 预测未来时刻的位置
 	p.x = p.x + fDelayTimeChangeX;
 	p.y = p.y + fDelayTimeChangeY;
-	// 2-4-3| 计算新的横向误差
-	fLateralError = CountPointLineDistance(p, referenceLine);
-	// 2-4-4| 转换成对应的正负,定义横向误差的正负,在车体沿着规划路径方向右侧为正
+	//计算新的点到直线的距离
+	float fLateralError = CountPointLineDistance(p, referenceLine);
+#else
+	// 确定横向误差的数值
+	float fLateralError = status->fLateralError;
+#endif
 	//转换默认航向角到[0-360)
 	fReferenceLineAngle = (fReferenceLineAngle < 0.0f) ? fReferenceLineAngle + 360.0f : fReferenceLineAngle;
-	//计算横向误差
+	//确定横向误差的符号
 	if (90.0f < fReferenceLineAngle  && fReferenceLineAngle <= 270.0f)
 	{
 		fLateralError = -fLateralError;
+		status->fLateralError = -status->fHeadingAngleError;
 	}
-
-	// 2-5 | 计算前视距离
-	//fLookAheadDistance = fLookAheadDistanceFactor * speed * fSamplePeriod * nSamplePointNum;
-	fLookAheadDistance = 4.0f;
-
-	// 2-6 | 计算转向角度
+	
+	//计算前视距离
+	//float fLookAheadDistance = fLookAheadDistanceFactor * speed;
+	float fLookAheadDistance = 4.0f;
+	
+	//计算转向角度
+	//期望转向角
+	float fWheelSteeringAngle;
 	//当偏离的太厉害的时候
 	if (fabsf(fLateralError) > fLookAheadDistance)
 	{
-		// 2-61| 计算转弯半径 ( tan(fMaxSwerveRadius) = 1 暂时不除了 )
-		//fTurningRadius = CarWheelBearingDistance / tanf(fMaxSwerveRadius);
-		fTurningRadius = CarWheelBearingDistance;
-		// 2-62| 计算转向角度
+		//计算k时刻的转弯半径
+		fTurningRadius = CarWheelBearingDistance / tanf(MaxSwerveAngle*(float)Degree2Rad);
+		// 计算转向角度
 		if (fabsf(fAimPointAngle - headingAngle) < 180.0f)
 		{
 			fWheelSteeringAngle = (fAimPointAngle < headingAngle) ? -MaxSwerveAngle : MaxSwerveAngle;
@@ -922,36 +1008,33 @@ uint8_t autoRunPurePursuit(point3d p, float speed, float headingAngle, command* 
 			fWheelSteeringAngle = (fAimPointAngle < headingAngle) ? MaxSwerveAngle : -MaxSwerveAngle;
 		}
 	}
+	//偏转的不是很厉害
 	else
 	{
-		//	2-61| 计算转弯半径
 #if ( __FPU_PRESENT==1 )
-
 		//计算前视距离和横向误差的平方差的根
 		arm_sqrt_f32(fLookAheadDistance*fLookAheadDistance - fLateralError * fLateralError, &fSqrtOut);
-
 		//计算误差角的sin和cos值
-		arm_sin_cos_f32(fHeadingAngleError, &fsinOut, &fcosOut);
-
-		//计算转向半径
-		fTurningRadius = 0.5f * (fLookAheadDistance * fLookAheadDistance) / (fLateralError*fcosOut + fSqrtOut * fsinOut);
+		arm_sin_cos_f32(fHeadingAngleError, &fSinValue, &fCosValue);
+		//计算k时刻的转向半径
+		fTurningRadius = 0.5f * (fLookAheadDistance*fLookAheadDistance) / (fLateralError*fCosValue + fSqrtOut*fSinValue);
 #else
-		fTurningRadius = 0.5f * powf(fLookAheadDistance, 2) / (fLateralError*cosf(Degree2Rad*fHeadingAngleError) + sqrtf(fLookAheadDistance*fLookAheadDistance - fLateralError * fLateralError)*sinf(Degree2Rad*fHeadingAngleError));
+		fTurningRadius = 0.5f * (fLookAheadDistance*fLookAheadDistance) / (fLateralError*cosf(fHeadingAngleError*(float)Degree2Rad) + sqrtf(fLookAheadDistance*fLookAheadDistance - fLateralError*fLateralError)*sinf(HeadingAngleError(float)Degree2Rad));
 #endif
-		//	2-72| 计算转向角度
-		fWheelSteeringAngle = atanf(CarWheelBearingDistance / fTurningRadius) * 57.29577951308237971f;
-
-		//	2-73| 如果太大就纠正回去
+		
+		//计算转向角度
+#ifdef SLIP_ENABLE	
+		fWheelSteeringAngle = atanf(CarWheelBearingDistance/fTurningRadius) * (float)Rad2Degree + fEquivalentSlipingAngle;
+#else
+		fWheelSteeringAngle = atanf(CarWheelBearingDistance/fTurningRadius) * (float)Rad2Degree;
+#endif
+		//如果太大就纠正回去
 		fWheelSteeringAngle = (fWheelSteeringAngle > MaxSwerveAngle) ? MaxSwerveAngle : ((fWheelSteeringAngle < -MaxSwerveAngle) ? -MaxSwerveAngle : fWheelSteeringAngle);
-	
 	}
-	/* 3 | 判断转弯方向和角度 */
-	info->nDirection = (fWheelSteeringAngle > 0) ? DIRECTION_STATUS_LEFT : DIRECTION_STATUS_RIGHT;
-	info->nWheelSteeringAngle = (uint16_t)(fabsf(fWheelSteeringAngle * 10.0f));
-
-	/* 4 | 返回必要数据 */
-	status->fHeadingAngleError = fHeadingAngleError;
-	status->fLateralError = fLateralError;
+	
+	/*  4 | 将信息转化为控制信息并输出 */
+	info->nDirection = (fabsf(fWheelSteeringAngle) < 2e-2f ) ? DIRECTION_STATUS_MID : (fWheelSteeringAngle > 0) ? DIRECTION_STATUS_LEFT : DIRECTION_STATUS_RIGHT;
+	info->nWheelSteeringAngle = (uint16_t)(fabsf(fWheelSteeringAngle *10.0f));
 	
 	return TRACKING_STATUS_NORMAL;
 }

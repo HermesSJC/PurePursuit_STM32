@@ -155,6 +155,9 @@
 
 #define MaxSwerveAngle 30.0f								//最大转向角
 
+//#define SLIP_ENABLE
+#define CONTROLDELAY_ENABLE
+
 /* Private Typedef ------------------------------------------------------------ */
 
 typedef struct SPoint3d 			point3d;
@@ -182,9 +185,9 @@ struct SPoint3d
 */
 struct SInitNode
 {
-	struct SInitNode *prev;			//前一个结点的地址
-	struct SPoint3d point;	//路径点
-	struct SInitNode *next;			//后一个结点的地址
+	struct SInitNode *prev;		//前一个结点的地址
+	struct SPoint3d point;		//路径点
+	struct SInitNode *next;		//后一个结点的地址
 };
 
 /**
@@ -192,9 +195,9 @@ struct SInitNode
 */
 struct SInitList
 {
-	struct SInitNode *head;			//头结点
-	struct SInitNode *tail;			//尾结点
-	uint16_t nSize;					//长度
+	struct SInitNode *head;		//头结点
+	struct SInitNode *tail;		//尾结点
+	uint16_t nSize;						//长度
 };
 
 /**
@@ -314,7 +317,12 @@ void AddReferencePoint(float x, float y, float z);
 //清除参考路径
 void clearReferencePath(void);					
 //清除初始路径
-void clearInitPath(void);		
+void clearInitPath(void);
+//debug初始路径
+void debugPrintInitPath(void);
+//debug参考路径
+void debugPrintReferencePath(void);
+
 
 //姿态参数设置
 
@@ -326,7 +334,8 @@ void JWG2ENU(double j, double w, double g, point3d *enu);
 //生成参考路径
 uint8_t GenerateReferencePath(point3d p, float headingAngle);
 //purepursuit模型自动追踪
-uint8_t autoRunPurePursuit(point3d p, float speed, float headingAngle, command* info, trackStatus* status);
+uint8_t autoRunPurePursuit(point3d p, float speed, float headingAngle, float slipingAngle, float presentWheelSteeringRadius, command* info, trackStatus* status);
+
 
 //追踪算法相关参数设置
 
@@ -335,7 +344,7 @@ void setLineArithmetic(bool arithmetic);
 //设置是否第一个点 用来初始化坐标原点
 void setFirstPoint(bool flag);
 //设置是否平移路径
-void setFirstMove(bool status);
+void setFirstMove(bool statu);
 //设置采样频率
 void setSamplingPeriod(uint8_t period);
 //设置速度影响系数	
