@@ -13,12 +13,11 @@ COMMAND_STATUS<br>
 	COMMAND_STATUS_IS_LINE,											//是否直线<br>
 	COMMAND_STATUS_IS_TURN,											//是否转向<br>
 	COMMAND_STATUS_IS_SLAVE,										//是否下位机计算<br><br>
-
 	COMMAND_STATUS_SET_SAMPLINGPERIOD,					//设置采样周期<br>
 	COMMAND_STATUS_SET_SIGHTDISTANCE_FACTOR,		//设置前视距离系数<br>
 	COMMAND_STATUS_SET_KP,                     	//发送PID参数P<br>
-  COMMAND_STATUS_SET_KI,                     	//发送PID参数I<br>
-  COMMAND_STATUS_SET_KD,                     	//发送PID参数D<br><br>
+  	COMMAND_STATUS_SET_KI,                     	//发送PID参数I<br>
+  	COMMAND_STATUS_SET_KD,                     	//发送PID参数D<br><br>
 	COMMAND_STATUS_AUTOSET_MIDANGLE,            //自动设置中位角<br>
 	COMMAND_STATUS_AUTOSET_PWMPID,              //自动设置角度跟随的pid值<br><br>
 	COMMAND_STATUS_AFFECTSPEED,									//设置速度影响因子<br>
