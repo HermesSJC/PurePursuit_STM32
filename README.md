@@ -28,7 +28,10 @@ COMMAND_STATUS<br>
 
 
 # api说明
-
+	01-配置初始路径的动态内存分配
+	函数原型 bool configureInitPathMemory(void);	
+	返回true  初始化成功
+	返回false 初始化失败
 
 # 修改历史
 
