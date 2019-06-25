@@ -1,58 +1,54 @@
 /**
 	******************************************************************************
-	* File Name          : stracking.c
-	* Description        : è¿™ä¸ªæ–‡ä»¶åŒ…æ‹¬äº†è‡ªåŠ¨é©¾é©¶çš„å‡½æ•°å®ç°
+	* File Name          : smpc.c
+	* Description        : Õâ¸öÎÄ¼ş°üÀ¨ÁË×Ô¶¯¼İÊ»µÄº¯ÊıÊµÏÖ
 	******************************************************************************
 	*
-	* COPYRIGHT(c) 2019-2020 ä¸œå—å¤§å­¦-ä»ªå™¨ç§‘å­¦ä¸å·¥ç¨‹å­¦é™¢-çŸ³ä½³æ™¨ (QQ:369348508)
+	* COPYRIGHT(c) 2019-2020 ¶«ÄÏ´óÑ§-ÒÇÆ÷¿ÆÑ§Óë¹¤³ÌÑ§Ôº-Ê¯¼Ñ³¿ (QQ:369348508)
 	*
-	* define éœ€å¢åŠ  ARM_MATH_CM7 __CC_ARM å’Œ __FPU_PRESENT=1 æ‰å¯ä»¥ä½¿ç”¨ç¡¬ä»¶FPUè¿›è¡Œå¿«é€Ÿè®¡ç®—
 	*
-	* è·Ÿæ–°æ—¥å¿— -------------------------------------------------------------------
+	* ¸úĞÂÈÕÖ¾ -------------------------------------------------------------------
 	*
-	* æ—¶é—´ï¼š2018-08-30  ç‰ˆæœ¬ï¼š1.0.0
-	* 1-å®Œæˆäº†ä¸‹ä½æœºç§»æ¤çš„åˆç‰ˆ
+	* Ê±¼ä£º2018-08-30  °æ±¾£º1.0.0
+	* 1-Íê³ÉÁËÏÂÎ»»úÒÆÖ²µÄ³õ°æ
 	*
-	* æ—¶é—´ï¼š2018-09-20  ç‰ˆæœ¬ï¼š2.0.0
-	* 1-å®Œæˆäº†ç®—æ³•çš„æ”¹è¿›ï¼Œç¼©çŸ­æ—¶é—´
+	* Ê±¼ä£º2018-09-20  °æ±¾£º2.0.0
+	* 1-Íê³ÉÁËËã·¨µÄ¸Ä½ø£¬Ëõ¶ÌÊ±¼ä
 	* 
-	* æ—¶é—´ï¼š2018-09-21	ç‰ˆæœ¬ï¼š2.0.1
-	* 1-ä¿®å¤äº†è½¬æ¢èˆªå‘è§’é”™è¯¯çš„bug
+	* Ê±¼ä£º2018-09-21	°æ±¾£º2.0.1
+	* 1-ĞŞ¸´ÁË×ª»»º½Ïò½Ç´íÎóµÄbug
 	*
-	* æ—¶é—´ï¼š2018-09-25  ç‰ˆæœ¬ï¼š2.0.2
-	* 1-ä¿®æ”¹äº†å¹³ç§»è·¯å¾„çš„ç®—æ³•
-	* 2-å¢åŠ äº†ä¿®æ”¹é‡‡æ ·å‘¨æœŸå’Œé‡‡æ ·ç‚¹æ•°çš„api
-	* 3-å¢åŠ äº†è®¾ç½®å‰è§†è·ç¦»ç³»æ•°çš„api
+	* Ê±¼ä£º2018-09-25  °æ±¾£º2.0.2
+	* 1-ĞŞ¸ÄÁËÆ½ÒÆÂ·¾¶µÄËã·¨
+	* 2-Ôö¼ÓÁËĞŞ¸Ä²ÉÑùÖÜÆÚºÍ²ÉÑùµãÊıµÄapi
+	* 3-Ôö¼ÓÁËÉèÖÃÇ°ÊÓ¾àÀëÏµÊıµÄapi
 	*
-	* æ—¶é—´ï¼š2018-09-26  ç‰ˆæœ¬ï¼š2.0.3
-	* 1-å¢åŠ äº†ä¸€äº›enumçš„å®šä¹‰
+	* Ê±¼ä£º2018-09-26  °æ±¾£º2.0.3
+	* 1-Ôö¼ÓÁËÒ»Ğ©enumµÄ¶¨Òå
 	*
-	* æ—¶é—´ï¼š2018-10-15  ç‰ˆæœ¬ï¼š2.0.4
-	* 1-ä¿®å¤äº†ç›´çº¿è¿½è¸ªç®—æ³•ä¸­çš„bug
-	* 2-ä¼˜åŒ–äº†å¹³ç§»è·¯å¾„çš„ç®—æ³•
-	* 3-å¢åŠ äº†ç›´çº¿è¿½è¸ªç®—æ³•
-	* 4-å¢åŠ äº†è®¾ç½®ä¸ºç›´çº¿è¿½è¸ªç®—æ³•çš„api
+	* Ê±¼ä£º2018-10-15  °æ±¾£º2.0.4
+	* 1-ĞŞ¸´ÁËÖ±Ïß×·×ÙËã·¨ÖĞµÄbug
+	* 2-ÓÅ»¯ÁËÆ½ÒÆÂ·¾¶µÄËã·¨
+	* 3-Ôö¼ÓÁËÖ±Ïß×·×ÙËã·¨
+	* 4-Ôö¼ÓÁËÉèÖÃÎªÖ±Ïß×·×ÙËã·¨µÄapi
 	*
-	* æ—¶é—´ï¼š2019-01-11  ç‰ˆæœ¬ï¼š2.0.5
-	* 1-å¢åŠ äº†è®¾ç½®ä¸¤ä¸ªæ—¶é—´å½±å“ç³»æ•°çš„api
-	* 2-ä¼˜åŒ–äº†çº¯è¿½è¸ªç®—æ³•,ä½¿å…¶æ ¹æ®é€Ÿåº¦ä¿®æ”¹å»¶è¿Ÿæ§åˆ¶çš„åŠŸèƒ½ 
+	* Ê±¼ä£º2019-01-11  °æ±¾£º2.0.5
+	* 1-Ôö¼ÓÁËÉèÖÃÁ½¸öÊ±¼äÓ°ÏìÏµÊıµÄapi
+	* 2-ÓÅ»¯ÁË´¿×·×ÙËã·¨,Ê¹Æä¸ù¾İËÙ¶ÈĞŞ¸ÄÑÓ³Ù¿ØÖÆµÄ¹¦ÄÜ 
 	*
-	* æ—¶é—´ï¼š2019-03-11  ç‰ˆæœ¬ï¼š3.0.0
-	* 1-ä½¿ç”¨é“¾è¡¨é‡å†™è·¯å¾„ç®—æ³•
+	* Ê±¼ä£º2019-03-11  °æ±¾£º3.0.0
+	* 1-Ê¹ÓÃÁ´±íÖØĞ´Â·¾¶Ëã·¨
 	*
-	* æ—¶é—´ï¼š2019-05-14  ç‰ˆæœ¬ï¼š3.0.1
-	* 1-ä¿®å¤äº†è½¬å‘æ–¹å‘åˆ¤æ–­é”™è¯¯çš„bug
+	* Ê±¼ä£º2019-06-04	°æ±¾£º3.0.1
+	* 1-ĞŞ¸´ÁËÁ´±íÇå¿Õ¿ÉÄÜ»áËÀ»úµÄbug
 	*
-	* æ—¶é—´ï¼š2019-05-16  ç‰ˆæœ¬ï¼š3.0.2
-	* 1-ä¿®å¤äº†åˆ é™¤é“¾è¡¨æ—¶å€™å¡æ­»çš„bug
+	* Ê±¼ä£º2019-06-14	°æ±¾£º3.0.1
+	* 1-Ôö¼ÓÁËÀëÏß³õÊ¼»¯µÄ¹¦ÄÜ
+	* 2-ÓÅ»¯ÁËÁ´±íÇå¿ÕµÄËã·¨
 	*
-	* æ—¶é—´ï¼š2019-05-17  ç‰ˆæœ¬ï¼š3.0.3
-	* 1-ä¿®å¤äº†å¹³ç§»è·¯å¾„è§’åº¦å•ä½å‡ºé”™å¯¼è‡´å¹³ç§»é”™è¯¯çš„bug
+	*	Ê±¼ä£º2018-06-15	°æ±¾£º3.0.2
+	* 1-ĞŞ¸´ÁËÀëÏß³õÊ¼»¯ÒÔºó ÔÙÔÚÏß³õÊ¼»¯ Êı¾İÃ»ÓĞÇå¿ÕµÄbug
 	*
-	* æ—¶é—´ï¼š2019-05-22  ç‰ˆæœ¬ï¼š3.1.0
-	* 1-ä¿®å¤äº†ä½¿ç”¨çº¿æ®µç®—æ³•æ—¶,å¹³ç§»è·¯å¾„å¯èƒ½ä¼šå¡æ­»çš„bug
-	* 2-ä¿®å¤äº†åˆ é™¤é“¾è¡¨æ—¶,å‰©ä¸‹ä¸€ä¸ªç‚¹æ²¡æœ‰åˆ é™¤çš„bug
-	* 3-æ·»åŠ äº†ä¾§æ»‘é¢„æµ‹ç®—æ³•,å¹¶å…¼å®¹ä¹‹å‰çš„ç®—æ³•
   ******************************************************************************
 */
 
@@ -65,61 +61,64 @@
 
 /* Private Variables ---------------------------------------------------------*/
 
-initList initPath;						//ç¬¬ä¸€æ¬¡è¡Œé©¶çš„è·¯å¾„
-referenceList referencePath;	//å¹³ç§»åçš„å‚è€ƒè·¯å¾„
+initList initPath;						//µÚÒ»´ÎĞĞÊ»µÄÂ·¾¶
+referenceList referencePath;	//Æ½ÒÆºóµÄ²Î¿¼Â·¾¶
 
-uint16_t nReferencePointIndex = 0;	//å‚è€ƒè·¯å¾„ä¸‹æ ‡çš„åºå·
+uint16_t nReferencePointIndex = 0;	//²Î¿¼Â·¾¶ÏÂ±êµÄĞòºÅ
 
-uint8_t nSamplePointNum = 2;		//é‡‡æ ·ç‚¹çš„ä¸ªæ•°
-float fSamplePeriod = 0.5f;			//é‡‡æ ·æ—¶é—´(ç§’)
+uint8_t nSamplePointNum = 5;		//²ÉÑùµãµÄ¸öÊı
+float fSamplePeriod = 0.2f;			//²ÉÑùÊ±¼ä(Ãë)
 
-float fSpeedAffactedFactor = 0.15f;			//é€Ÿåº¦å½±å“ç³»æ•°	
-float fSpeedFixedFactor = 0.05f;				//é€Ÿåº¦å›ºå®šç³»æ•°
+float fSpeedAffactedFactor = 0.15f;			//ËÙ¶ÈÓ°ÏìÏµÊı	
+float fSpeedFixedFactor = 0.05f;				//ËÙ¶È¹Ì¶¨ÏµÊı
 
-bool isLineArithmeticFlag = false;			//æ˜¯å¦ç›´çº¿è¿½è¸ª
-bool isFirstPointFlag = false;					//æ˜¯å¦ç¬¬ä¸€ä¸ªç‚¹
-bool isFirstMoveFlag = false;						//æ˜¯å¦å¹³ç§»è·¯å¾„
+bool isLineArithmeticFlag = false;			//ÊÇ·ñÖ±Ïß×·×Ù
+bool isFirstPointFlag = false;					//ÊÇ·ñµÚÒ»¸öµã
+bool isFirstMoveFlag = false;						//ÊÇ·ñÆ½ÒÆÂ·¾¶
 
-float fLookAheadDistanceFactor = 4.0f;	//å‰è§†è·ç¦»ç³»æ•°
+float fLookAheadDistanceFactor = 14.0f;	//Ç°ÊÓ¾àÀëÏµÊı
+
+//#define ControlDelay //¿ØÖÆÄ£ĞÍÑÓÊ±
+//#define SDebug       //strackingµ÷ÊÔĞÅÏ¢
 
 /* Private Functions ---------------------------------------------------------*/
 
 /**
 * @name:				GetArithmeticSquareRoot
-* @brief:				è®¡ç®—ä¸¤ä¸ªæ•°çš„ç®—æœ¯å¹³æ–¹æ ¹
-* @in:					n1,n2[float] è¾“å…¥çš„ä¸¤ä¸ªæ•°
-* @out:					æ— 
-* @retval:			[float]ä¸¤ä¸ªæ•°çš„ç®—æœ¯å¹³æ–¹æ ¹
+* @brief:				¼ÆËãÁ½¸öÊıµÄËãÊõÆ½·½¸ù
+* @in:					n1,n2[float] ÊäÈëµÄÁ½¸öÊı
+* @out:					ÎŞ
+* @retval:			[float]Á½¸öÊıµÄËãÊõÆ½·½¸ù
 * @reviseTime:	2018-09-20
 */
 float GetArithmeticSquareRoot(float n1, float n2)
 {
-//å¦‚æœä½¿èƒ½äº†ç¡¬ä»¶æµ®ç‚¹åº“
+//Èç¹ûÊ¹ÄÜÁËÓ²¼ş¸¡µã¿â
 #if (__FPU_PRESENT == 1)
 	
 	float fSqrtOut = 0.0f;
 	float fPowerIn[2] = {0.0f, 0.0f};
 	float fPowerOut = 0.0f;
 	
-	//ä¸¤ä¸ªæ•°å­—èµ‹åˆå€¼
+	//Á½¸öÊı×Ö¸³³õÖµ
 	fPowerIn[0] = n1;
 	fPowerIn[1] = n2;
 	
-	//æ±‚å¹³æ–¹å’Œ
+	//ÇóÆ½·½ºÍ
 	arm_power_f32(fPowerIn, 2, &fPowerOut);
 	
-	//è®¡ç®—æˆåŠŸ è¿”å›å¹³æ–¹æ ¹
+	//¼ÆËã³É¹¦ ·µ»ØÆ½·½¸ù
 	if( arm_sqrt_f32(fPowerOut, &fSqrtOut) == ARM_MATH_SUCCESS)
 	{
 		return fSqrtOut;
 	}
-	//è®¡ç®—å¤±è´¥ è¿”å›-1
+	//¼ÆËãÊ§°Ü ·µ»Ø-1
 	else
 	{
 		return -1.0f;
 	}
 	
-//å¦‚æœæ²¡æœ‰ä½¿ç”¨ç¡¬ä»¶æµ®ç‚¹åº“
+//Èç¹ûÃ»ÓĞÊ¹ÓÃÓ²¼ş¸¡µã¿â
 #else
 	
 	return sqrtf(powf(n1,2) + powf(n2,2));
@@ -129,31 +128,32 @@ float GetArithmeticSquareRoot(float n1, float n2)
 
 /**
 * @name:				getPointAngle
-* @brief:				è®¡ç®—ç¬¬ä¸€ä¸ªç‚¹åˆ°ç¬¬äºŒä¸ªç‚¹çš„çš„è§’åº¦
-* @in:					p1,p2[point3d] ç‚¹çš„åæ ‡
-* @out:					æ— 
-* @retval:			[float]è§’åº¦[-180,180)
+* @brief:				¼ÆËãµÚÒ»¸öµãµ½µÚ¶ş¸öµãµÄµÄ½Ç¶È
+* @in:					p1,p2[point3d] µãµÄ×ø±ê
+* @out:					ÎŞ
+* @retval:			[float]½Ç¶È[-180,180)
 * @reviseTime:	2018-08-29
 */
 inline float GetPointAngle(point3d p1, point3d p2)
 {
-	return atan2f(p2.y - p1.y, p2.x - p1.x) * (float)Rad2Degree ;
+	return atan2f(p2.y - p1.y, p2.x - p1.x) * Rad2Degree ;
 }
 
 /**
 * @name:					countLinePara
-* @brief:					é€šè¿‡ä¸¤ç‚¹è®¡ç®—ç›´çº¿çš„Ax+By+C=0çš„å‚æ•°
-* @in:						p1,p2[point3d] ä¸¤ä¸ªå‚è€ƒç‚¹
-* @out:						l[lineInfo]	ç›´çº¿çš„å‚æ•°
-* @retval:				æ— 
+* @brief:					Í¨¹ıÁ½µã¼ÆËãÖ±ÏßµÄAx+By+C=0µÄ²ÎÊı
+* @in:						p1,p2[point3d] Á½¸ö²Î¿¼µã
+* @out:						l[lineInfo]	Ö±ÏßµÄ²ÎÊı
+* @retval:				ÎŞ
 * @reviseTime:		2019-04-19
 */
 void CountLinePara(point3d p1, point3d p2, lineInfo *l)
 {
 	
-	//å¦‚æœæ–œç‡ä¸å­˜åœ¨
+	//Èç¹ûĞ±ÂÊ²»´æÔÚ
 	// p1.x == p2.x
-	if( -1.0e-5f < p1.x-p2.x && p1.x-p2.x < 1.0e-5f )
+	//if( -1.0e-6f < p1.x-p2.x && p1.x-p2.x < 1.0e-6f )
+	if(p1.x == p2.x)
 	{
 		l->A = 1.0f;
 		l->B = 0.0f;
@@ -170,10 +170,10 @@ void CountLinePara(point3d p1, point3d p2, lineInfo *l)
 
 /**
 * @name:				countPointLineDistance
-* @brief:				è®¡ç®—ç‚¹åˆ°ç›´çº¿çš„è·ç¦»
-* @in:					p[point3d] ç‚¹çš„åæ ‡ | l[lineInfo]	ç›´çº¿çš„å‚æ•°
-* @out:					æ— 
-* @retval:			[float]ç‚¹åˆ°ç›´çº¿çš„è·ç¦»
+* @brief:				¼ÆËãµãµ½Ö±ÏßµÄ¾àÀë
+* @in:					p[point3d] µãµÄ×ø±ê | l[lineInfo]	Ö±ÏßµÄ²ÎÊı
+* @out:					ÎŞ
+* @retval:			[float]µãµ½Ö±ÏßµÄ¾àÀë
 * @reviseTime:	2018-08-21
 */
 inline float CountPointLineDistance(point3d p, lineInfo l)
@@ -182,40 +182,40 @@ inline float CountPointLineDistance(point3d p, lineInfo l)
 }
 
 /**
-* @name:			configureInitPathMemory
-* @brief:			ä¸ºåˆå§‹è·¯å¾„åˆ†é…å†…å­˜åœ°å€
-* @in:				æ— 
-* @out:				æ— 
-* @retval:			[bool]æ˜¯å¦åˆ†é…æˆåŠŸ
-* @reviseTime:		2019-03-11
+* @name:				configureInitPathMemory
+* @brief:				Îª³õÊ¼Â·¾¶·ÖÅäÄÚ´æµØÖ·
+* @in:					ÎŞ
+* @out:					ÎŞ
+* @retval:			[bool]ÊÇ·ñ·ÖÅä³É¹¦
+* @reviseTime:	2019-03-11
 */
 bool configureInitPathMemory(void)
 {
-	//ç”³è¯·å¤´å°¾ç»“ç‚¹çš„åœ°å€
+	//ÉêÇëÍ·Î²½áµãµÄµØÖ·
 	initPath.head = malloc(sizeof(initNode));
 	initPath.tail = malloc(sizeof(initNode));
 
-	//åˆ†é…å¤±è´¥æŠ¥é”™è¿”å› æˆåŠŸåˆ™ç»§ç»­
+	//·ÖÅäÊ§°Ü±¨´í·µ»Ø ³É¹¦Ôò¼ÌĞø
 	if (initPath.head == NULL || initPath.tail == NULL)
 	{
 		return false;
 	}
 
-	//è®¾ç½®å¤´ç»“ç‚¹ head-> <-tail
+	//ÉèÖÃÍ·½áµã head-> <-tail
 	initPath.head->prev = NULL;
 	initPath.head->point.x = 0.0f;
 	initPath.head->point.y = 0.0f;
 	initPath.head->point.z = 0.0f;
 	initPath.head->next = initPath.tail;
 
-	//è®¾ç½®å°¾ç»“ç‚¹ head-> <-tail
+	//ÉèÖÃÎ²½áµã head-> <-tail
 	initPath.tail->prev = initPath.head;
 	initPath.tail->point.x = 0.0f;
 	initPath.tail->point.y = 0.0f;
 	initPath.tail->point.z = 0.0f;
 	initPath.tail->next = NULL;
 
-	//è®¾ç½®ç‚¹çš„ä¸ªæ•°
+	//ÉèÖÃµãµÄ¸öÊı
 	initPath.nSize = 0;
 
 	return true;
@@ -223,10 +223,10 @@ bool configureInitPathMemory(void)
 
 /**
 * @name:				configureReferencePathMemory
-* @brief:				ä¸ºå‚è€ƒè·¯å¾„åˆ†é…å†…å­˜åœ°å€
-* @in:					æ— 
-* @out:					æ— 
-* @retval:			[bool]æ˜¯å¦åˆ†é…æˆåŠŸ
+* @brief:				Îª²Î¿¼Â·¾¶·ÖÅäÄÚ´æµØÖ·
+* @in:					ÎŞ
+* @out:					ÎŞ
+* @retval:			[bool]ÊÇ·ñ·ÖÅä³É¹¦
 * @reviseTime:	2019-03-11
 */
 bool configureReferencePathMemory(void)
@@ -246,73 +246,74 @@ bool configureReferencePathMemory(void)
 }
 
 /**
-* @name:			addInitPoint
-* @brief:			æ·»åŠ åˆå§‹åŒ–è·¯å¾„
-* @in:				æ— 
-* @out:				æ— 
-* @retval:			[bool]æ˜¯å¦æ·»åŠ æˆåŠŸ
-* @reviseTime:		2019-03-11
+* @name:				addInitPoint
+* @brief:				Ìí¼Ó³õÊ¼»¯Â·¾¶
+* @in:					p[point3d] ³õÊ¼»¯µÄµã
+* @out:					ÎŞ
+* @retval:			[bool]ÊÇ·ñÌí¼Ó³É¹¦
+* @reviseTime:	2019-03-11
 */
 bool addInitPoint(point3d p)
 {
-	initNode *temp;										//éœ€è¦æ·»åŠ çš„ç»“ç‚¹
-	static initNode *lastPosition;		//è®°å½•ä¸Šæ¬¡æ·»åŠ çš„ä½ç½®
+	initNode *temp;										//ĞèÒªÌí¼ÓµÄ½áµã
+	static initNode *lastPosition;		//¼ÇÂ¼ÉÏ´ÎÌí¼ÓµÄÎ»ÖÃ
 
-	/*ç¬¬ä¸€ä¸ªæ•°æ® æ”¾åœ¨é¦–ç»“ç‚¹*/
+	/*µÚÒ»¸öÊı¾İ ·ÅÔÚÊ×½áµã*/
 	if (initPath.nSize == 0 && initPath.head->next == initPath.tail && initPath.tail->prev == initPath.head)
 	{
-		//åæ ‡èµ‹å€¼
+		//×ø±ê¸³Öµ
 		initPath.head->point.x = p.x;
 		initPath.head->point.y = p.y;
 		initPath.head->point.z = p.z;
 
-		//æ•°æ®æˆä¸º1ä¸ª
+		//Êı¾İ³ÉÎª1¸ö
 		initPath.nSize = 1;
 	}
-	/* ç¬¬äºŒä¸ªæ•°æ® æ”¾åœ¨å°¾ç»“ç‚¹ */
+	/* µÚ¶ş¸öÊı¾İ ·ÅÔÚÎ²½áµã */
 	else if (initPath.nSize == 1 && initPath.head->next == initPath.tail && initPath.tail->prev == initPath.head)
 	{
-		//åæ ‡èµ‹å€¼
+		//×ø±ê¸³Öµ
 		initPath.tail->point.x = p.x;
 		initPath.tail->point.y = p.y;
 		initPath.tail->point.z = p.z;
 
-		//æ•°æ®æˆä¸º2ä¸ª
+		//Êı¾İ³ÉÎª2¸ö
 		initPath.nSize = 2;
 		
-		//ä¸Šä¸€ä¸ªä½ç½®çš„æŒ‡é’ˆæŒ‡å‘å¤´èŠ‚ç‚¹
+		//ÉÏÒ»¸öÎ»ÖÃµÄÖ¸ÕëÖ¸ÏòÍ·½Úµã
 		lastPosition = initPath.head;
 	}
-	/* ç¬¬ä¸‰ä¸ªä»¥åŠä»¥åçš„æ•°æ® */
+	/* µÚÈı¸öÒÔ¼°ÒÔºóµÄÊı¾İ */
 	else
 	{
-		//ä¸ºæ•°æ®åˆ†é…å†…å­˜ å¦‚æœåˆ†é…å¤±è´¥åˆ™æŠ¥é”™è¿”å› æˆåŠŸåˆ™ç»§ç»­
+		//ÎªÊı¾İ·ÖÅäÄÚ´æ Èç¹û·ÖÅäÊ§°ÜÔò±¨´í·µ»Ø ³É¹¦Ôò¼ÌĞø
 		temp = malloc(sizeof(initNode));
 		if (temp == NULL)
 		{
 			return false;
 		}		
 		
-		//å¢åŠ ä¸€ä¸ªæ–°çš„ç»“ç‚¹
+		//Ôö¼ÓÒ»¸öĞÂµÄ½áµã
 		lastPosition->next = temp;
 		
-		//å°¾ç»“ç‚¹çš„æ•°æ®æ”¾åœ¨å€’æ•°ç¬¬äºŒä¸ªç»“ç‚¹
+		//Î²½áµãµÄÊı¾İ·ÅÔÚµ¹ÊıµÚ¶ş¸ö½áµã
 		temp->prev = lastPosition;
 		temp->point.x = initPath.tail->point.x;
 		temp->point.y = initPath.tail->point.y;
 		temp->point.z = initPath.tail->point.z;
 		temp->next = initPath.tail;
 		
-		//åæ ‡èµ‹å€¼
+		//×ø±ê¸³Öµ
 		initPath.tail->point.x = p.x;
 		initPath.tail->point.y = p.y;
 		initPath.tail->point.z = p.z;
 		initPath.tail->prev = temp;
 		
-		//æ•°æ®æ•°é‡è‡ªå¢ä¸€æ¬¡
+
+		//Êı¾İÊıÁ¿×ÔÔöÒ»´Î
 		initPath.nSize++;
 		
-		//ä¸Šä¸€ä¸ªä½ç½®çš„æŒ‡é’ˆæŒ‡å‘ä¸Šä¸€ä¸ªä½ç½®
+		//ÉÏÒ»¸öÎ»ÖÃµÄÖ¸ÕëÖ¸ÏòÉÏÒ»¸öÎ»ÖÃ
 		lastPosition = temp;
 		
 	}
@@ -320,30 +321,62 @@ bool addInitPoint(point3d p)
 }
 
 /**
+* @name:				addInitPoints
+* @brief:				ÀëÏßÌí¼Ó³õÊ¼Â·¾¶
+* @in:					p1,p2[point3d] ÀëÏßÂ·¾¶µÄÆğÊ¼µã
+* @out:					ÎŞ
+* @retval:			ÎŞ
+* @reviseTime:	2019-06-17
+*/
+
+bool addInitPoints(point3d p1, point3d p2)
+{
+	//Ö»ÓĞ2¸öµã headºÍtail
+	//ÉèÖÃÍ·½áµã
+	initPath.head->prev = NULL;
+	initPath.head->point.x = p1.x;
+	initPath.head->point.y = p1.y;
+	initPath.head->point.z = p1.z;
+	initPath.head->next = initPath.tail;
+
+	//ÉèÖÃÎ²½áµã
+	initPath.tail->prev = initPath.head;
+	initPath.tail->point.x = p2.x;
+	initPath.tail->point.y = p2.y;
+	initPath.tail->point.z = p2.z;
+	initPath.tail->next = NULL;
+
+	//ÉèÖÃµãµÄ¸öÊı
+	initPath.nSize = 2;
+	
+	return true;
+}
+
+/**
 * @name:				AddReferencePoint
-* @brief:				æ·»åŠ å‚è€ƒè·¯å¾„
-* @in:					æ— 
-* @out:					æ— 
-* @retval:			æ— 
+* @brief:				Ìí¼Ó²Î¿¼Â·¾¶
+* @in:					x,y,z[float] ²Î¿¼Â·¾¶µÄÈıÎ¬×ø±ê
+* @out:					ÎŞ
+* @retval:			ÎŞ
 * @reviseTime:	2019-03-11
 */
 void AddReferencePoint(float x, float y, float z)
 {
-	/* å¯¹åº”ä½ç½®æ·»åŠ ç‚¹çš„ä¿¡æ¯ */
+	/* ¶ÔÓ¦Î»ÖÃÌí¼ÓµãµÄĞÅÏ¢ */
 	(referencePath.point + referencePath.nSize)->x = x;
 	(referencePath.point + referencePath.nSize)->y = y;
 	(referencePath.point + referencePath.nSize)->z = z;
 
-	/* ç‚¹çš„ä¸ªæ•°è‡ªå¢ä¸€æ¬¡ */
+	/* µãµÄ¸öÊı×ÔÔöÒ»´Î */
 	referencePath.nSize++;
 }
 
 /**
 * @name:				clearReferencePath
-* @brief:				æ¸…é™¤å‚è€ƒè·¯å¾„
-* @in:					æ— 
-* @out:					æ— 
-* @retval:			æ— 
+* @brief:				Çå³ı²Î¿¼Â·¾¶
+* @in:					ÎŞ
+* @out:					ÎŞ
+* @retval:			ÎŞ
 * @reviseTime:	2019-03-11
 */
 void clearReferencePath(void)
@@ -357,54 +390,71 @@ void clearReferencePath(void)
 }
 
 /**
-* @name:			clearInitPath
-* @brief:			æ¸…é™¤åˆå§‹è·¯å¾„
-* @in:				æ— 
-* @out:				æ— 
-* @retval:			[bool]æ˜¯å¦æ·»åŠ æˆåŠŸ
-* @reviseTime:		2019-03-11
+* @name:				clearInitPath
+* @brief:				Çå³ı³õÊ¼Â·¾¶
+* @in:					ÎŞ
+* @out:					ÎŞ
+* @retval:			[bool]ÊÇ·ñÌí¼Ó³É¹¦
+* @reviseTime:	2019-03-11
 */
 void clearInitPath(void)
 {
-	initNode *head;
-	initNode *temp;
-	
-	head = initPath.head->next;
-	temp = head->next;
-	
-	do
+	//0¸öµã²»ĞèÒªÇå³ı Ö±½Ó·µ»Ø
+	if(initPath.nSize == 0)
 	{
-		head->prev = NULL;
-		head->next = NULL;
-		free(head);
-		head = temp;
-		temp = head->next;
-	}while(temp->next != initPath.tail);
+		return;
+	}
+	
+	//Èç¹ûÖ»ÓĞ1¸öµã»òÕß2¸öµã
+	if(initPath.nSize == 1 || initPath.nSize == 2)
+	{
+		//ÉèÖÃÍ·½áµã
+		initPath.head->prev = NULL;
+		initPath.head->point.x = 0.0f;
+		initPath.head->point.y = 0.0f;
+		initPath.head->point.z = 0.0f;
+		initPath.head->next = initPath.tail;
 
-	//è®¾ç½®å¤´ç»“ç‚¹
-	initPath.head->prev = NULL;
-	initPath.head->point.x = 0.0f;
-	initPath.head->point.y = 0.0f;
-	initPath.head->point.z = 0.0f;
-	initPath.head->next = initPath.tail;
+		//ÉèÖÃÎ²½áµã
+		initPath.tail->prev = initPath.head;
+		initPath.tail->point.x = 0.0f;
+		initPath.tail->point.y = 0.0f;
+		initPath.tail->point.z = 0.0f;
+		initPath.tail->next = NULL;
+	}
+	//Èç¹ûÓĞ3¸ö¼°ÒÔÉÏ
+	else
+	{
+		//headÖ¸ÏòinitPathµÄµÚ¶ş¸öµã
+		initNode *head = initPath.head->next;
+		//temp³õÊ¼Ö¸ÏòinitPathµÄµÚ¶ş¸öµã ºóĞø¸ü¸Ä
+		initNode *temp = head;
+		
+		//Ã»ÓĞµ½µ¹ÊıµÚ¶ş¸öµã ¾Í²»¶Ï±éÀú
+		while(temp->next != initPath.tail)
+		{
+			temp = head->next;
+			head->prev = NULL;
+			head->next = NULL;
+			free(head);
+			head = temp;
+		}
+		//ÊÍ·ÅwhileÑ­»·Ã»Ö´ĞĞµÄµ¹ÊıµÚ¶ş¸öµã
+		temp->next = NULL;
+		temp->prev = NULL;
+		free(temp);
+	}
 
-	//è®¾ç½®å°¾ç»“ç‚¹
-	initPath.tail->prev = initPath.head;
-	initPath.tail->point.x = 0.0f;
-	initPath.tail->point.y = 0.0f;
-	initPath.tail->point.z = 0.0f;
-	initPath.tail->next = NULL;
-
-	//è®¾ç½®ç‚¹çš„ä¸ªæ•°
+	//ÇåÁãµãµÄ¸öÊı
 	initPath.nSize = 0;
 }
 
 /**
 * @name:				debugPrintInitPath
-* @brief:				è¾“å‡ºåˆå§‹è·¯å¾„
-* @in:					æ— 
-* @out:					æ— 
-* @retval:			æ— 
+* @brief:				Êä³ö³õÊ¼Â·¾¶
+* @in:					ÎŞ
+* @out:					ÎŞ
+* @retval:			ÎŞ
 * @reviseTime:	2018-04-22
 */
 void debugPrintInitPath(void)
@@ -413,61 +463,51 @@ void debugPrintInitPath(void)
 	head = initPath.head;
 	
 	uint16_t i = 1;
-	printf("init path:\r\n");
-	printf("from head to tail:\r\n");
-	do
-	{	
-		printf("point %3d is (%.4f, %.4f, %.4f)\r\n",i, head->point.x, head->point.y, head->point.z);
+	printf("init path list:\r\n");
+	while(head->next != NULL)
+	{
+		printf("point %3d is (%3.4f, %3.4f, %3.4f)\r\n",i, head->point.x, head->point.y, head->point.z);
 		i++;
 		head = head->next;
-		
-	}while(head->next != NULL);
+	}
+	printf("point %3d is (%3.4f, %3.4f, %3.4f)\r\n",i, head->point.x, head->point.y, head->point.z);
+	printf("init path end:\r\n");
 	
-	initNode *tail;
-	tail = initPath.tail;
-	
-	i = 1;
-	printf("\r\nfrom tail to head:\r\n");
-	do
-	{
-		printf("point %3d is (%.4f, %.4f, %.4f)\r\n",i, tail->point.x, tail->point.y, tail->point.z);
-		i++;
-		tail = tail->prev;
-		
-	}while(tail->prev != NULL);
 }
 
 /**
 * @name:				debugPrintInitPath
-* @brief:				è¾“å‡ºå‚è€ƒè·¯å¾„
-* @in:					æ— 
-* @out:					æ— 
-* @retval:			æ— 
+* @brief:				Êä³ö²Î¿¼Â·¾¶
+* @in:					ÎŞ
+* @out:					ÎŞ
+* @retval:			ÎŞ
 * @reviseTime:	2018-04-22
 */
 void debugPrintReferencePath(void)
 {
+	printf("reference path list:\r\n");
 	for(uint16_t i = 0; i < referencePath.nSize; i++)
 	{
-		printf("point %3d is (%.4f, %.4f, %.4f)\r\n",i, (referencePath.point + i)->x, (referencePath.point + i)->y, (referencePath.point + i)->z );
+		printf("point %3d is (%3.4f, %3.4f)\r\n",i + 1, (referencePath.point + i)->x, (referencePath.point + i)->y );
 	}
+	printf("reference path end:\r\n");
 }
 
 
 /**
 * @name:				changeCourseAngle
-* @brief:				è½¬æ¢èˆªå‘è§’
-* @in:					angle[float] è½¬æ¢å‰èˆªå‘è§’
-* @out:					æ— 
-* @retval:			[float] è½¬æ¢åèˆªå‘è§’[0,360)
+* @brief:				×ª»»º½Ïò½Ç
+* @in:					angle[float] ×ª»»Ç°º½Ïò½Ç
+* @out:					ÎŞ
+* @retval:			[float] ×ª»»ºóº½Ïò½Ç[0,360)
 * @reviseTime:	2018-09-21
 */
 __inline float changeCourseAngle(float angle)
 {
-	/* è§’åº¦è½¬æ¢ */
+	/* ½Ç¶È×ª»» */
 	angle = 450.0f - angle;
 	
-	/* è§’åº¦è½¬æ¢åˆ°[0,360)ä¹‹é—´ */
+	/* ½Ç¶È×ª»»µ½[0,360)Ö®¼ä */
 	angle = (angle >= 360.0f) ? angle - 360.0f : ( angle < 0.0f ) ? angle + 360.0f : angle ;
 	
 	return angle;
@@ -476,67 +516,67 @@ __inline float changeCourseAngle(float angle)
 
 /**
 * @name:				JWG2ENU
-* @brief:				ç»çº¬é«˜åæ ‡ç³»è½¬æ¢åˆ°ä¸œåŒ—å¤©åæ ‡ç³»
-* @in:					j,w,g[double] ç»çº¬é«˜åæ ‡
-* @out:					p[point] ä¸œåŒ—å¤©åæ ‡
-* @retval:			æ— 
+* @brief:				¾­Î³¸ß×ø±êÏµ×ª»»µ½¶«±±Ìì×ø±êÏµ
+* @in:					j,w,g[double] ¾­Î³¸ß×ø±ê
+* @out:					p[point] ¶«±±Ìì×ø±ê
+* @retval:			ÎŞ
 * @reviseTime:	2018-09-20
 */
 void JWG2ENU(double j, double w, double g, point3d *p)
 {
-	//åæ ‡è½¬æ¢çš„ç³»æ•°çŸ©é˜µ
-	static double dTransforMatrix[3][3] = {{0.0}};
-	//ecef0çš„åæ ‡ç³»çš„æ•°å€¼
+	//×ø±ê×ª»»µÄÏµÊı¾ØÕó
+	static double dTransforMatrix[3][3] = { 0.0 };
+	//ecef0µÄ×ø±êÏµµÄÊıÖµ
 	static double ecefx0 = 0.0, ecefy0 = 0.0, ecefz0 = 0.0;
 
-	//è§’åº¦çš„ç³»æ•°
+	//½Ç¶ÈµÄÏµÊı
 	double sinp = 0, cosp = 0.0, sinl = 0.0, cosl = 0.0;
-	//åæ ‡è½¬æ¢ç³»æ•°
+	//×ø±ê×ª»»ÏµÊı
 	double v = 0.0;
-	//ecefçš„åæ ‡ç³»çš„æ•°å€¼
+	//ecefµÄ×ø±êÏµµÄÊıÖµ
 	double ecefx = 0.0, ecefy = 0.0, ecefz = 0.0;
 
-	//è§’åº¦è½¬å¼§åº¦
+	//½Ç¶È×ª»¡¶È
 	j = j * Degree2Rad;
 	w = w * Degree2Rad;
 
-	//å¸¦å…¥sinå’Œcos
+	//´øÈësinºÍcos
 	sinp = sin(w);
 	cosp = cos(w);
 	sinl = sin(j);
 	cosl = cos(j);
 
-	//è®¾ç½®ç¬¬ä¸€ä¸ªç‚¹çš„å‚æ•°
+	//ÉèÖÃµÚÒ»¸öµãµÄ²ÎÊı
 	if (isFirstPointFlag == true)
 	{
-		//åªè®¾ç½®ä¸€æ¬¡
+		//Ö»ÉèÖÃÒ»´Î
 		isFirstPointFlag = false;
 
-		//è®¾ç½®è½¬æ¢çŸ©é˜µçš„ç³»æ•°
+		//ÉèÖÃ×ª»»¾ØÕóµÄÏµÊı
 		dTransforMatrix[0][0] = -sinl;					dTransforMatrix[0][1] = cosl;						dTransforMatrix[0][2] = 0.0;
 		dTransforMatrix[1][0] = -sinp * cosl;   dTransforMatrix[1][1] = -sinp * sinl;   dTransforMatrix[1][2] = cosp;
 		dTransforMatrix[2][0] = cosp * cosl;    dTransforMatrix[2][1] = cosp * sinl;    dTransforMatrix[2][2] = sinp;
 
-		//è®¡ç®—ecef0çš„å€¼ å•ä½ä»ç±³è½¬æ¢ä¸ºç±³ ç±»å‹ä»doubleè½¬doubel
+		//¼ÆËãecef0µÄÖµ µ¥Î»´ÓÃ××ª»»ÎªÃ× ÀàĞÍ´Ódouble×ªdoubel
 		v = RE_WGS84 / sqrt(1.0 - e * sinp*sinp);
 		ecefx0 = (v + g)*cosp*cosl;
 		ecefy0 = (v + g)*cosp*sinl;
 		ecefz0 = (v*(1.0 - e) + g)*sinp;
 
-		//ç¬¬ä¸€ä¸ªåæ ‡çš„ç‚¹è‚¯å®šæ˜¯(0,0,0)
+		//µÚÒ»¸ö×ø±êµÄµã¿Ï¶¨ÊÇ(0,0,0)
 		p->x = 0.0f;
 		p->y = 0.0f;
 		p->z = 0.0f;
 	}
 	else
 	{
-		//jwgè½¬ecef å•ä½ä»ç±³è½¬æ¢ä¸ºç±³ ç±»å‹ä»doubleè½¬doubel
+		//jwg×ªecef µ¥Î»´ÓÃ××ª»»ÎªÃ× ÀàĞÍ´Ódouble×ªdoubel
 		v = RE_WGS84 / sqrt(1.0 - e * sinp*sinp);
 		ecefx = (v + g)*cosp*cosl - ecefx0;
 		ecefy = (v + g)*cosp*sinl - ecefy0;
 		ecefz = (v*(1.0 - e) + g)*sinp - ecefz0;
 
-		//ecefè½¬enu å•ä½ä»ç±³è½¬æ¢ä¸ºç±³ï¼Œç±»å‹ä»doubleè½¬float
+		//ecef×ªenu µ¥Î»´ÓÃ××ª»»ÎªÃ×£¬ÀàĞÍ´Ódouble×ªfloat
 		p->x = (float)(dTransforMatrix[0][0] * ecefx + dTransforMatrix[0][1] * ecefy + dTransforMatrix[0][2] * ecefz);
 		p->y = (float)(dTransforMatrix[1][0] * ecefx + dTransforMatrix[1][1] * ecefy + dTransforMatrix[1][2] * ecefz);
 		p->z = (float)(dTransforMatrix[2][0] * ecefx + dTransforMatrix[2][1] * ecefy + dTransforMatrix[2][2] * ecefz);
@@ -545,10 +585,10 @@ void JWG2ENU(double j, double w, double g, point3d *p)
 
 /**
 * @name:				setSamplingPeriod
-* @brief:				è®¾ç½®é‡‡æ ·å‘¨æœŸå’Œé‡‡æ ·ç‚¹çš„ä¸ªæ•°
-* @in:					period[uint8_t] é‡‡æ ·å‘¨æœŸï¼ˆå•ä½ï¼šhzï¼‰
-* @out:					æ— 
-* @retval:			æ— 
+* @brief:				ÉèÖÃ²ÉÑùÖÜÆÚºÍ²ÉÑùµãµÄ¸öÊı
+* @in:					period[uint8_t] ²ÉÑùÖÜÆÚ£¨µ¥Î»£ºhz£©
+* @out:					ÎŞ
+* @retval:			ÎŞ
 * @reviseTime:	2018-09-25
 */
 __inline void setSamplingPeriod(uint8_t period)
@@ -559,10 +599,10 @@ __inline void setSamplingPeriod(uint8_t period)
 
 /**
 * @name:				setLineArithmetic
-* @brief:				è®¾ç½®æ˜¯å¦ä½¿ç”¨ç›´çº¿è¿½è¸ªç®—æ³•
-* @in:					status[bool] æ˜¯å¦è®¾ç½®
-* @out:					æ— 
-* @retval:			æ— 
+* @brief:				ÉèÖÃÊÇ·ñÊ¹ÓÃÖ±Ïß×·×ÙËã·¨
+* @in:					status[bool] ÊÇ·ñÉèÖÃ
+* @out:					ÎŞ
+* @retval:			ÎŞ
 * @reviseTime:	2018-10-15
 */
 void setLineArithmetic(bool status)
@@ -572,10 +612,10 @@ void setLineArithmetic(bool status)
 
 /**
 * @name:				setFirstPoint
-* @brief:				è®¾ç½®æ˜¯å¦ç¬¬ä¸€ä¸ªç‚¹çš„å‡½æ•°
-* @in:					status[bool] æ˜¯å¦è®¾ç½®
-* @out:					æ— 
-* @retval:			æ— 
+* @brief:				ÉèÖÃÊÇ·ñµÚÒ»¸öµãµÄº¯Êı
+* @in:					status[bool] ÊÇ·ñÉèÖÃ
+* @out:					ÎŞ
+* @retval:			ÎŞ
 * @reviseTime:	2018-09-20
 */
 __inline void setFirstPoint(bool status)
@@ -584,12 +624,12 @@ __inline void setFirstPoint(bool status)
 }
 
 /**
-* @name:					setFirstMove
-* @brief:					è®¾ç½®æ˜¯å¦ç¬¬ä¸€æ¬¡å¹³ç§»è·¯å¾„çš„å‡½æ•°
-* @in:						status[bool] æ˜¯å¦è®¾ç½®
-* @out:						æ— 
-* @retval:				æ— 
-* @reviseTime:		2018-09-20
+* @name:				setFirstMove
+* @brief:				ÉèÖÃÊÇ·ñµÚÒ»´ÎÆ½ÒÆÂ·¾¶µÄº¯Êı
+* @in:					status[bool] ÊÇ·ñÉèÖÃ
+* @out:					ÎŞ
+* @retval:			ÎŞ
+* @reviseTime:	2018-09-20
 */
 __inline void setFirstMove(bool status)
 {
@@ -598,10 +638,10 @@ __inline void setFirstMove(bool status)
 
 /**
 * @name:				setSpeedAffactedFactor
-* @brief:				è®¾ç½®é€Ÿåº¦å½±å“ç³»æ•°
-* @in:					[uint8_t] å½±å“ç³»æ•°
-* @out:					æ— 
-* @retval:			æ— 
+* @brief:				ÉèÖÃËÙ¶ÈÓ°ÏìÏµÊı
+* @in:					[uint8_t] Ó°ÏìÏµÊı
+* @out:					ÎŞ
+* @retval:			ÎŞ
 * @reviseTime:	2019-04-19
 */
 __inline void setSpeedAffactedFactor(uint8_t factor)
@@ -611,10 +651,10 @@ __inline void setSpeedAffactedFactor(uint8_t factor)
 
 /**
 * @name:				setSpeedFixedFactor
-* @brief:				è®¾ç½®é€Ÿåº¦å›ºå®šç³»æ•°
-* @in:					[uint8_t] å½±å“ç³»æ•°
-* @out:					æ— 
-* @retval:			æ— 
+* @brief:				ÉèÖÃËÙ¶È¹Ì¶¨ÏµÊı
+* @in:					[uint8_t] Ó°ÏìÏµÊı
+* @out:					ÎŞ
+* @retval:			ÎŞ
 * @reviseTime:	2019-04-19
 */
 __inline void setSpeedFixedFactor(uint8_t factor)
@@ -623,12 +663,12 @@ __inline void setSpeedFixedFactor(uint8_t factor)
 }
 
 /**
-* @name:					setLookAheadDistanceFactor
-* @brief:					è®¾ç½®å‰è§†è·ç¦»ç³»æ•°
-* @in:						factor[uint8_t] å‰è§†è·ç¦»ç³»æ•°
-* @out:						æ— 
-* @retval:				æ— 
-* @reviseTime:		2018-09-25
+* @name:				setLookAheadDistanceFactor
+* @brief:				ÉèÖÃÇ°ÊÓ¾àÀëÏµÊı
+* @in:					factor[uint8_t] Ç°ÊÓ¾àÀëÏµÊı
+* @out:					ÎŞ
+* @retval:			ÎŞ
+* @reviseTime:	2018-09-25
 */
 __inline void setLookAheadDistanceFactor(uint8_t factor)
 {
@@ -636,21 +676,22 @@ __inline void setLookAheadDistanceFactor(uint8_t factor)
 }
 
 /**
-* @name:			generateReferencePath
-* @brief:			ç”Ÿæˆå‚è€ƒè·¯å¾„
-* @in:				æ— 
-* @out:				æ— 
-* @retval:			[bool]æ˜¯å¦ç”ŸæˆæˆåŠŸ
-* @reviseTime:		2019-03-12
+* @name:				generateReferencePath
+* @brief:				Éú³É²Î¿¼Â·¾¶
+* @in:					ÎŞ
+* @out:					ÎŞ
+* @retval:			[bool]ÊÇ·ñÉú³É³É¹¦
+* @reviseTime:	2019-03-12
 */
 uint8_t GenerateReferencePath(point3d p, float headingAngle)
 {
 	float x00 = 0.0f, y00 = 0.0f, z00 = 0.0f;
 	float fHeadingAngleError = 0.0f;
 	float fReferenceHeadingAngle = 0.0;
+	uint8_t nReferencePointNum = 0;
 
-	// 0 | åˆ¤æ–­æœ‰æ²¡æœ‰è¶³å¤Ÿçš„ç‚¹
-	//çº¿æ®µ
+	// 0 | ÅĞ¶ÏÓĞÃ»ÓĞ×ã¹»µÄµã
+	//Ïß¶Î
 	if (isLineArithmeticFlag == false)
 	{
 		if (initPath.nSize < 2 * nSamplePointNum)
@@ -658,7 +699,7 @@ uint8_t GenerateReferencePath(point3d p, float headingAngle)
 			return TRACKING_STATUS_NO_ENOUGH_POINTS;
 		}
 	}
-	//ç›´çº¿
+	//Ö±Ïß
 	else
 	{
 		if (initPath.nSize < 2)
@@ -667,77 +708,75 @@ uint8_t GenerateReferencePath(point3d p, float headingAngle)
 		}
 	}
 
-	// 1 | æ¸…é™¤ä»¥å‰çš„ä¿¡æ¯
+	// 1 | Çå³ıÒÔÇ°µÄĞÅÏ¢
 	clearReferencePath();
 
-	// 2 | æ ¹æ®åˆå§‹è·¯å¾„é‡æ–°åˆ†é…åœ°å€
-	//æ ¹æ®è¿½è¸ªæ–¹æ³•åˆ†é…ç©ºé—´å¤§å°
-	uint16_t nReferencePointNum = (isLineArithmeticFlag == false )? initPath.nSize/nSamplePointNum : 2 ;
-	//æ ¹æ®ä¸ªæ•°åˆ†é…å†…å­˜ å¦‚æœåˆ†é…å¤±è´¥åˆ™æŠ¥é”™ æˆåŠŸåˆ™ç»§ç»­
+	// 2 | ¸ù¾İ³õÊ¼Â·¾¶ÖØĞÂ·ÖÅäµØÖ·
+	//¸ù¾İ×·×Ù·½·¨·ÖÅä¿Õ¼ä´óĞ¡
+	nReferencePointNum = (isLineArithmeticFlag == false )? initPath.nSize / nSamplePointNum : 2 ;
+	//¸ù¾İ¸öÊı·ÖÅäÄÚ´æ Èç¹û·ÖÅäÊ§°ÜÔò±¨´í ³É¹¦Ôò¼ÌĞø
 	referencePath.point = malloc(nReferencePointNum * sizeof(point3d));
 	if (referencePath.point == NULL)
 	{
 		return TRACKING_STATUS_NO_MEMORY;
 	}
 
-	// 3 | è®¡ç®—è§’åº¦ä¹‹é—´çš„å·®è·
-	//å‚è€ƒè§’åº¦ (-180, 180]
-	fReferenceHeadingAngle = atan2f(initPath.tail->point.y - initPath.head->point.y, initPath.tail->point.x - initPath.head->point.x)*(float)Rad2Degree;
-	//èˆªå‘è§’ (0, 360]
+	// 3 | ¼ÆËã½Ç¶ÈÖ®¼äµÄ²î¾à
+	//²Î¿¼½Ç¶È (-180, 180]
+	fReferenceHeadingAngle = atan2f(initPath.tail->point.y - initPath.head->point.y, initPath.tail->point.x - initPath.head->point.x) * Rad2Degree;
+	//º½Ïò½Ç (0, 360]
 	fHeadingAngleError = headingAngle - fReferenceHeadingAngle;
-	//èˆªå‘è¯¯å·® è½¬æ¢åˆ°(-180, 180]
+	//º½ÏòÎó²î ×ª»»µ½(-180, 180]
 	fHeadingAngleError = (fHeadingAngleError >= 180.0f) ? fHeadingAngleError - 360.0f : ((fHeadingAngleError < -180.0f) ? fHeadingAngleError + 360.0f : fHeadingAngleError);
 
-	// 4 | å¹³ç§»è·¯å¾„
-	//çº¿æ®µ
+	// 4 | Æ½ÒÆÂ·¾¶
+	//Ïß¶Î
 	if (isLineArithmeticFlag == false)
 	{
-		uint16_t i = 0;
-		//èˆªå‘è§’å·®è·ä¸å¤§ æŒ‰ç…§ç¬¬ä¸€ä¸ªå¹³ç§»
+		uint16_t i;
+		//º½Ïò½Ç²î¾à²»´ó °´ÕÕµÚÒ»¸öÆ½ÒÆ
 		if ( -90.0f <= fHeadingAngleError && fHeadingAngleError < 90.0f)
 		{
-			//è·å–ç¬¬ä¸€ä¸ªç‚¹çš„ä½ç½®
+			//»ñÈ¡µÚÒ»¸öµãµÄÎ»ÖÃ
 			initNode * head = initPath.head;
 			x00 = p.x - head->point.x;
 			y00 = p.y - head->point.y;
 			z00 = p.z - head->point.z;
-			
-			do
+			for (i = 0; i < initPath.nSize; i++)
 			{
-				//æ¯éš”nSamplePointNum å–ç‚¹
+				//Ã¿¸ônSamplePointNum È¡µã
 				if (i % nSamplePointNum == 0)
 				{
 					AddReferencePoint(head->point.x + x00, head->point.y + y00, head->point.z + z00);
 				}
-				//åˆ°ä¸‹ä¸€ä¸ªç‚¹
+				//µ½ÏÂÒ»¸öµã
 				head = head->next;
-			}while(head->next != NULL);
+			}
 		}
-		//å·®è·æ¯”è¾ƒå¤§åˆ™æŒ‰ç…§æœ€åä¸€ä¸ªå¹³ç§»
+		//²î¾à±È½Ï´óÔò°´ÕÕ×îºóÒ»¸öÆ½ÒÆ
 		else
 		{
-			//è·å–æœ€åä¸€ä¸ªç‚¹çš„ä½ç½®
+			//»ñÈ¡×îºóÒ»¸öµãµÄÎ»ÖÃ
 			initNode * tail = initPath.tail;
 			x00 = p.x - tail->point.x;
 			y00 = p.y - tail->point.y;
 			z00 = p.z - tail->point.z;
-	
-			do
+			for (i = 0; i < initPath.nSize; i++)
 			{
-				//æ¯éš”nSamplePointNum å–ç‚¹
+				//Ã¿¸ônSamplePointNum È¡µã
 				if (i % nSamplePointNum == 0)
 				{
 					AddReferencePoint(tail->point.x + x00, tail->point.y + y00, tail->point.z + z00);
 				}
-				//åˆ°å‰ä¸€ä¸ªç‚¹
+				//µ½Ç°Ò»¸öµã
 				tail = tail->prev;
-			}while(tail->prev != NULL);
+			}
 		}
 	}
-	//ç›´çº¿
+	//Ö±Ïß
 	else
 	{
-		//èˆªå‘è§’å·®è·ä¸å¤§ æŒ‰ç…§ç¬¬ä¸€ä¸ªå¹³ç§»
+		//º½Ïò½Ç²î¾à²»´ó °´ÕÕµÚÒ»¸öÆ½ÒÆ
 		if (-90.0f <= fHeadingAngleError && fHeadingAngleError < 90.0f)
 		{
 			x00 = p.x - initPath.head->point.x;
@@ -747,7 +786,7 @@ uint8_t GenerateReferencePath(point3d p, float headingAngle)
 			AddReferencePoint(initPath.head->point.x + x00, initPath.head->point.y + y00, initPath.head->point.z + z00);
 			AddReferencePoint(initPath.tail->point.x + x00, initPath.tail->point.y + y00, initPath.tail->point.z + z00);
 		}
-		//å·®è·æ¯”è¾ƒå¤§åˆ™æŒ‰ç…§æœ€åä¸€ä¸ªå¹³ç§»
+		//²î¾à±È½Ï´óÔò°´ÕÕ×îºóÒ»¸öÆ½ÒÆ
 		else
 		{
 			x00 = p.x - initPath.tail->point.x;
@@ -764,29 +803,56 @@ uint8_t GenerateReferencePath(point3d p, float headingAngle)
 
 /**
 * @name:				autoRunPurePursuit
-* @brief:				æ¨¡å‹é¢„æµ‹æ§åˆ¶è¿½è¸ªè·¯å¾„
-* @in:					å½“å‰ç‚¹p[point3d] | é€Ÿåº¦speed[float] | èˆªå‘è§’headingAngle[float] | ä¾§æ»‘è§’slipingAngle[float] | å½“å‰è½¬å‘å¼§åº¦presentWheelSteeringRadian[float] 
-* @out:					æ§åˆ¶å‘½ä»¤[command] | è¿½è¸ªçŠ¶æ€[trackStatus]
-* @retval:			è¿½è¸ªæƒ…å†µ[uint8_t]
-* @reviseTime:	2019-05-29
+* @brief:				Ä£ĞÍÔ¤²â¿ØÖÆ×·×ÙÂ·¾¶
+* @in:					µ±Ç°µãp[point3d] | ËÙ¶Èspeed[float] | º½Ïò½ÇheadingAngle[float]
+* @out:					¿ØÖÆÃüÁî[command] | ×·×Ù×´Ì¬[trackStatus]
+* @retval:			×·×ÙÇé¿ö[uint8_t]
+* @reviseTime:	2019-03-13
 */
-uint8_t autoRunPurePursuit(point3d p, float speed, float headingAngle, float slipingAngle, float presentWheelSteeringRadian, command* info, trackStatus* status)
+uint8_t autoRunPurePursuit(point3d p, float speed, float headingAngle, command* info, trackStatus* status)
 {
-	//å®šä¹‰è½¬å‘åŠå¾„  ##åœ¨kæ—¶åˆ»éœ€è¦k-1æ—¶åˆ»çš„è½¬å‘åŠå¾„
-	static float fTurningRadius;
-#ifdef SLIP_ENABLE
-	//å®šä¹‰ä¸Šä¸€ä¸ªæ—¶åˆ»çš„èˆªå‘è§’
-	static float fPrevTimeHeadingAngle;
-	//å®šä¹‰ä¸Šä¸€ä¸ªæ—¶åˆ»çš„xåæ ‡å’Œyåæ ‡
-	static float fPrevTimeX, fPrevTimeY;
+	//¶¨Òåµ±Ç°µãºÍÏÂÒ»¸öµã
+	static point3d presPoint, nextPoint;
+	//¶¨Òåµ±Ç°²Î¿¼µãµÄ¾àÀëºÍÏÂÒ»¸ö²Î¿¼µãµÄ¾àÀë
+	float fPresDistance, fNextDistance;
+	//¶¨Òå²Î¿¼Ïß¶Î
+	lineInfo referenceLine;
+	//¶¨ÒåºáÏòÎó²î
+	float fLateralError;
+	//¶¨Òå½Ç¶ÈÎó²î
+	float fHeadingAngleError;
+	//¶¨Òå²Î¿¼Ïß¶ÎµÄº½Ïò½ÇºÍ³¤¶È
+	float fReferenceLineAngle;
+	static float fReferenceLineLength;
+	//¶¨ÒåÃé×¼µÄ½Ç¶ÈºÍÃé×¼Ïß¶ÎµÄ³¤¶È
+	float fAimPointAngle;
+	//¶¨ÒåÇ°ÊÓ¾àÀë
+	float fLookAheadDistance;
+	//¶¨ÒåÆÚÍûÇ°ÂÖ×ªÏò½Ç
+	float fWheelSteeringAngle;
+	//¶¨Òå×ªÏò°ë¾¶
+	static float fTurningRadius = 37.5f;
+#ifdef ControlDelay
+	//¶¨ÒåÑÓ³ÙÊ±¼ä
+	float fDelayTime;
+	//¶¨ÒåÑÓ³ÙÊ±¼äµÄº½Ïò½Ç±ä»¯
+	float fDelayTimeChangeHeadingRadius;
+	//¶¨Òå³µÌå×ø±êÏµÏÂµÄ±ä»¯Á¿
+	float fDelayTimeChangeX, fDelayTimeChangeY;
+	//¶¨Òå³µÌå×ø±êÏµÏÂµÄ×ø±êÖµ
+	float fBodyX, fBodyY;
 #endif
-	
-	
-	/*  0 | åˆ¤æ–­æ˜¯å¦ç§»åŠ¨è·¯å¾„ */
+
+#if ( __FPU_PRESENT==1 )
+	static float fSqrtOut = 0.0f;
+	static float fsinOut = 0.0f, fcosOut = 0.0f;
+#endif
+
+	/*  0 | ÒÆ¶¯Â·¾¶ */
 	if(isFirstMoveFlag == true)
 	{
 		isFirstMoveFlag = false;
-		uint8_t res = GenerateReferencePath(p, headingAngle);
+		uint8_t res = GenerateReferencePath(p,headingAngle);
 		if(res != TRACKING_STATUS_NORMAL)
 		{
 			status->fHeadingAngleError = 0.0f;
@@ -795,39 +861,33 @@ uint8_t autoRunPurePursuit(point3d p, float speed, float headingAngle, float sli
 			info->nWheelSteeringAngle = 0;
 			return res;
 		}
-		//k-1æ—¶åˆ»çš„è½¬å‘åŠå¾„å®šä¹‰ä¸ºå¾ˆå¤§ å½“ä½œç›´çº¿è¡Œé©¶
-		fTurningRadius = 1.0e5f;
-#ifdef SLIP_ENABLE
-		//ç”¨å½“å‰æ—¶åˆ»çš„ç‚¹å½“ä½œk-1æ—¶åˆ»çš„ç‚¹ å¦åˆ™ç¬¬ä¸€æ¬¡ä¸€å®šä¼šè¢«åˆ¤å®šäº§ç”Ÿä¾§æ»‘
-		fPrevTimeX = p.x;
-		fPrevTimeY = p.y;
-#endif
+		
+		if (isLineArithmeticFlag == true)
+		{
+			//Ö±Ïß×·×ÙÖ»ĞèÒª2¸öµã
+			//µÚÒ»¸öµã
+			presPoint.x = (referencePath.point + 0)->x;
+			presPoint.y = (referencePath.point + 0)->y;
+			presPoint.z = (referencePath.point + 0)->z;
+			
+			//µÚ¶ş¸öµã
+			nextPoint.x = (referencePath.point + (referencePath.nSize - 1))->x;
+			nextPoint.y = (referencePath.point + (referencePath.nSize - 1))->y;
+			nextPoint.z = (referencePath.point + (referencePath.nSize - 1))->z;
+			
+			//¼ÆËãÂ·Ïß³¤¶È
+			fReferenceLineLength = GetArithmeticSquareRoot(presPoint.x - nextPoint.x, presPoint.y - nextPoint.y);	
+		}
 	}
-	
-	/*  1 | ç¡®å®šå½“å‰è¦è¿½è¸ªçš„ä¸¤ä¸ªç‚¹çš„æ•°æ® ä»¥åŠæ˜¯å¦åˆ°åº• */
-	//å®šä¹‰å½“å‰è¿½è¸ªè·¯å¾„çš„ä¸¤ä¸ªç«¯ç‚¹
-	point3d prevPoint, nextPoint;
-	//ç›´çº¿è¿½è¸ª
-	if(isLineArithmeticFlag == true)
+
+	/*  1 | È·¶¨µ±Ç°Òª×·×ÙµÄÁ½¸öµãµÄÊı¾İ ÒÔ¼°ÊÇ·ñµ½µ×*/
+	//Èç¹ûÊÇÖ±Ïß×·×Ù
+	if (isLineArithmeticFlag == true)
 	{
-		//ç›´çº¿è¿½è¸ªåªéœ€è¦2ä¸ªç‚¹
-		//ç¬¬ä¸€ä¸ªç‚¹
-		prevPoint.x = (referencePath.point + 0)->x;
-		prevPoint.y = (referencePath.point + 0)->y;
-		prevPoint.z = (referencePath.point + 0)->z;
-		
-		//ç¬¬äºŒä¸ªç‚¹
-		nextPoint.x = (referencePath.point + (referencePath.nSize - 1))->x;
-		nextPoint.y = (referencePath.point + (referencePath.nSize - 1))->y;
-		nextPoint.z = (referencePath.point + (referencePath.nSize - 1))->z;
-		
-		//è®¡ç®—å‚è€ƒè·¯çº¿çš„é•¿åº¦
-		float fReferenceLineLength = GetArithmeticSquareRoot(prevPoint.x - nextPoint.x, prevPoint.y - nextPoint.y);
-		//è®¡ç®—å’Œå‰ä¸€ä¸ªç«¯ç‚¹çš„è·ç¦»
-		float fPrevDistance = GetArithmeticSquareRoot(p.x - prevPoint.x, p.y - prevPoint.y);
-		
-		//åˆ©ç”¨ä¸‰è§’å½¢çš„è¾¹é•¿å®šå¾‹ å½“æœ€é•¿è¾¹è¢«åˆ‡æ¢æ—¶ è¯´æ˜ç›´çº¿è¿½è¸ªåˆ°åº•äº† è¿”å›ç»“æŸ
-		if (fPrevDistance >= fReferenceLineLength)
+		fPresDistance = GetArithmeticSquareRoot(p.x - presPoint.x, p.y - presPoint.y);
+		fNextDistance = GetArithmeticSquareRoot(p.x - nextPoint.x, p.y - nextPoint.y);
+		//ÅĞ¶ÏÊÇ·ñ½áÊø
+		if (fPresDistance >= fReferenceLineLength)
 		{
 			status->fHeadingAngleError = 0.0f;
 			status->fLateralError = 0.0f;
@@ -836,32 +896,33 @@ uint8_t autoRunPurePursuit(point3d p, float speed, float headingAngle, float sli
 			return TRACKING_STATUS_TO_THE_END;
 		}
 	}
-	//çº¿æ®µè¿½è¸ª
+	//Ïß¶Î×·×Ù
 	else
 	{
-		//ä¸‹æ ‡æ²¡è¶Šç•Œ è¯´æ˜è¿˜æ²¡åˆ°åº• æå–ä¸¤ä¸ªç«¯ç‚¹çš„å€¼
+		// ÏÂ±êÃ»Ô½½ç ÅĞ¶ÏÊÇ·ñĞèÒªÇĞ»»²Î¿¼µã
 		if (nReferencePointIndex + 1 <= referencePath.nSize - 1)
 		{
-			//å‰ä¸€ä¸ªç‚¹
-			prevPoint.x = (referencePath.point + nReferencePointIndex)->x;
-			prevPoint.y = (referencePath.point + nReferencePointIndex)->y;
-			prevPoint.z = (referencePath.point + nReferencePointIndex)->z;
-			//åˆ°å‰ä¸€ä¸ªç‚¹çš„è·ç¦»
-			float fPresDistance = GetArithmeticSquareRoot(p.x - prevPoint.x, p.y - prevPoint.y);
+			//Ïß¶Î×·×ÙĞèÒª²»Í£µÄ±ä»»µã
+			//Ç°Ò»¸öµã
+			presPoint.x = (referencePath.point + nReferencePointIndex)->x;
+			presPoint.y = (referencePath.point + nReferencePointIndex)->y;
+			presPoint.z = (referencePath.point + nReferencePointIndex)->z;
+			//µ½Ç°Ò»¸öµãµÄ¾àÀë
+			fPresDistance = GetArithmeticSquareRoot(p.x - presPoint.x, p.y - presPoint.y);
 
-			//åä¸€ä¸ªç‚¹
+			//ºóÒ»¸öµã
 			nextPoint.x = (referencePath.point + (nReferencePointIndex + 1))->x;
 			nextPoint.y = (referencePath.point + (nReferencePointIndex + 1))->y;
 			nextPoint.z = (referencePath.point + (nReferencePointIndex + 1))->z;
-			//åˆ°åä¸€ä¸ªç‚¹çš„è·ç¦»
-			float fNextDistance = GetArithmeticSquareRoot(p.x - nextPoint.x, p.y - nextPoint.y);
-			
-			//å¦‚æœç¦»å½“å‰ç‚¹çš„è·ç¦»å¤§äºä¸‹ä¸ªç‚¹ï¼Œåˆ‡æ¢å‚è€ƒç‚¹
+			//µ½ºóÒ»¸öµãµÄ¾àÀë
+			fNextDistance = GetArithmeticSquareRoot(p.x - nextPoint.x, p.y - nextPoint.y);
+
+			//Èç¹ûÀëµ±Ç°µãµÄ¾àÀë´óÓÚÏÂ¸öµã£¬ÇĞ»»²Î¿¼µã
 			if (fPresDistance > fNextDistance)
 			{
 				nReferencePointIndex++;
-				
-				//å¦‚æœåˆ‡æ¢äº†è¶Šç•Œ,å°±è¯´æ˜å€’åº•éƒ¨äº†
+
+				//Èç¹ûÇĞ»»ÁËÔ½½ç,¾ÍËµÃ÷µ¹µ×²¿ÁË
 				if (nReferencePointIndex + 1 == referencePath.nSize)
 				{
 					status->fHeadingAngleError = 0.0f;
@@ -870,135 +931,107 @@ uint8_t autoRunPurePursuit(point3d p, float speed, float headingAngle, float sli
 					info->nWheelSteeringAngle = 0;
 					return TRACKING_STATUS_TO_THE_END;
 				}
-				//æ²¡æœ‰çš„è¯ é‡æ–°å®šä½ç‚¹
-				prevPoint.x = (referencePath.point + nReferencePointIndex)->x;
-				prevPoint.y = (referencePath.point + nReferencePointIndex)->y;
-				prevPoint.z = (referencePath.point + nReferencePointIndex)->z;
+				//Ã»ÓĞµÄ»° ÖØĞÂ¶¨Î»µã
+				presPoint.x = (referencePath.point + nReferencePointIndex)->x;
+				presPoint.y = (referencePath.point + nReferencePointIndex)->y;
+				presPoint.z = (referencePath.point + nReferencePointIndex)->z;
 
 				nextPoint.x = (referencePath.point + (nReferencePointIndex + 1))->x;
 				nextPoint.y = (referencePath.point + (nReferencePointIndex + 1))->y;
-				nextPoint.z = (referencePath.point + (nReferencePointIndex + 1))->z;				
+				nextPoint.z = (referencePath.point + (nReferencePointIndex + 1))->z;
 			}
 		}
+		//Èç¹ûÏÂ±êÔ½½ç ¿Ï¶¨ÊÇµ½µ×ÁË
+		else
+		{
+			status->fHeadingAngleError = 0.0f;
+			status->fLateralError = 0.0f;
+			info->nDirection = DIRECTION_STATUS_MID;
+			info->nWheelSteeringAngle = 0;
+			return TRACKING_STATUS_TO_THE_END;
+		}
 	}
-	
-//å¦‚æœç¡¬ä»¶FPUå¯ä»¥ä½¿ç”¨ åˆ™ä½¿ç”¨ç¡¬ä»¶fpuè®¡ç®—ä¸€äº›ä¿¡æ¯
-#if( __FPU_PRESENT == 1)
-	float fSinValue, fCosValue;
-	float fSqrtOut;
-#endif
-	
-	/*  3 | æ”¹è¿›å‹çº¯è¿½è¸ªç®—æ³•è®¡ç®—æœŸæœ›è½¬å‘è§’ä¿¡æ¯ */
-	/** -------------------------------- æ»åæ€§é¢„æµ‹åŠè°ƒæ•´ -------------------------------- **/
-#ifdef CONTROLDELAY_ENABLE
-	// æ ¹æ®é€Ÿåº¦è®¡ç®—å»¶è¿Ÿæ—¶é—´
-	float fDelayTime = fSpeedFixedFactor + fSpeedAffactedFactor * speed;
-	// è®¡ç®—åœ¨å»¶è¿Ÿæ—¶é—´å†…çš„èˆªå‘è§’çš„å˜åŒ– è¿™é‡Œæ˜¯k-1æ—¶åˆ»çš„è½¬å‘åŠå¾„
-	float fDelayTimeChangeHeadingRadian = speed * fDelayTime / fTurningRadius;
+
+	/* 2 | ¸Ä½øĞÍ´¿×·×ÙËã·¨½øĞĞÂ·¾¶×·×Ù */
+#ifdef ControlDelay
+	/** -------------------------------- ÖÍºóĞÔÔ¤²â¼°µ÷Õû -------------------------------- **/
+	// 2-1-1| ¸ù¾İËÙ¶È¼ÆËãÑÓ³ÙÊ±¼ä
+	fDelayTime = fSpeedFixedFactor + fSpeedAffactedFactor * speed;
+
+	// 2-1-2| ¼ÆËãÑÓ³ÙÊ±¼äÄÚµ½´ïµÄĞÂÎ»ÖÃ ##Ê¹ÓÃÁËÉÏÒ»´ÎµÄ×ªÏò°ë¾¶
+	// ¼ÆËãº½Ïò½ÇµÄ±ä»¯
+	fDelayTimeChangeHeadingRadius = speed * fDelayTime / fTurningRadius;
 #if ( __FPU_PRESENT==1 )
-	//è®¡ç®—è½¦ä½“åæ ‡ç³»çš„å€¼
-	float fBodyX = fTurningRadius * (1 - arm_cos_f32(fDelayTimeChangeHeadingRadian));
-	float fBodyY = fTurningRadius * arm_sin_f32(fDelayTimeChangeHeadingRadian);
-	//è®¡ç®—è½¦ä½“åæ ‡ç³»ä¸‹æ”¹å˜çš„å€¼
-	arm_sin_cos_f32(headingAngle, &fSinValue, &fCosValue);
-	float fDelayTimeChangeX = fBodyX * fSinValue + fBodyY * fCosValue;
-	float fDelayTimeChangeY = fBodyY * fSinValue - fBodyX * fCosValue;
+	//¼ÆËã³µÌå×ø±êÏµµÄÖµ
+	fBodyX = fTurningRadius * (1 - arm_cos_f32(fDelayTimeChangeHeadingRadius));
+	fBodyY = fTurningRadius * arm_sin_f32(fDelayTimeChangeHeadingRadius);
+
+	//¼ÆËã³µÌå×ø±êÏµÏÂ¸Ä±äµÄÖµ
+	arm_sin_cos_f32(headingAngle, &fsinOut, &fcosOut);
+	fDelayTimeChangeX = fBodyX * fsinOut + fBodyY * fcosOut;
+	fDelayTimeChangeY = fBodyY * fsinOut - fBodyX * fcosOut;
 #else
-	//è®¡ç®—è½¦ä½“åæ ‡ç³»çš„å€¼
-	fBodyX = fTurningRadius * (1 - cosf(fDelayTimeChangeHeadingRadian));
-	fBodyY = fTurningRadius * sinf(fDelayTimeChangeHeadingRadian);
-	//è®¡ç®—è½¦ä½“åæ ‡ç³»ä¸‹æ”¹å˜çš„å€¼
-	float fHeadingRadian = headingAngle * (float)Degree2Rad;
-	float sinH = sinf(fHeadingRadian), cosh = cosf(fHeadingRadian);
-	float fDelayTimeChangeX = fBodyX * sinH + fBodyY * cosH;
-	float fDelayTimeChangeY = fBodyY * sinH - fBodyX * cosH;
-#endif
-	
+	//¼ÆËã³µÌå×ø±êÏµµÄÖµ
+	fBodyX = fTurningRadius * (1 - cosf(fTurningRadius));
+	fBodyY = fTurningRadius * sinf(fTurningRadius);
+
+	//¼ÆËã³µÌå×ø±êÏµÏÂ¸Ä±äµÄÖµ
+	fDelayTimeChangeX = fBodyX * sinf(headingAngle) + fBodyY * cosf(headingAngle);
+	fDelayTimeChangeY = fBodyY * sinf(headingAngle) - fBodyX * cosf(headingAngle);
 #endif
 
-	/** -------------------------------- ä¾§æ»‘çš„é¢„æµ‹åŠè°ƒæ•´ -------------------------------- **/
-#ifdef SLIP_ENABLE
-	//é¢„æµ‹çš„ç†è®ºä½ç½®
-#if ( __FPU_PRESENT==1 )
-	arm_sin_cos_f32(fPrevTimeHeadingAngle, &fSinValue, &fCosValue);
-	float fPredictedX = fPrevTimeX + speed*fSamplePeriod*fCosValue;
-	float fPredictedY = fPrevTimeY + speed*fSamplePeriod*fSinValue;
-#else
-	float fPrevTimeHeadingRadian = fPrevTimeHeadingAngle*(float)Degree2Rad;
-	float sinH = sinf(fPrevTimeHeadingRadian), cosH = cosf(fPrevTimeHeadingRadian)
-	float fPredictedX = fPrevTimeX + speed*fSamplePeriod*cosH;
-	float fPredictedY = fPrevTimeY + speed*fSamplePeriod*sinH;
 #endif
-	//æœŸæœ›ç­‰æ•ˆä¾§æ»‘è§’
-	float fEquivalentSlipingAngle = 0.0f;
-	//å¦‚æœè·ç¦»æ¯”è¾ƒå¤§ åˆ¤å®šäº§ç”Ÿäº†ä¾§æ»‘ è®¡ç®—ç­‰æ•ˆä¾§æ»‘è§’ å¦åˆ™å°±è¿˜æ˜¯0
-	if(GetArithmeticSquareRoot(p.x - fPredictedX, p.y - fPredictedY) > 0.1f)
-	{
-		//é¢„æµ‹çš„æœŸæœ›èˆªå‘è§’
-		float fPredictedHeadingAngle = fPrevTimeHeadingAngle + (speed*fSamplePeriod/fTurningRadius)*(float)(Rad2Degree);
-		//åè½®ä¾§æ»‘è§’
-		float fRearWheelSlipingRadian = (headingAngle - slipingAngle)*(float)Degree2Rad;
-		//å‰è½®ä¾§æ»‘è§’
-		float fFrontWheelSlipingRadian = (headingAngle - fPredictedHeadingAngle)*(float)Degree2Rad;
-		//è®¡ç®—ç­‰æ•ˆä¾§æ»‘è§’
-		fEquivalentSlipingAngle = (1.0f/(1.0f/presentWheelSteeringRadian + 1.0f/(presentWheelSteeringRadian+fRearWheelSlipingRadian) + 1.0f/fFrontWheelSlipingRadian) - presentWheelSteeringRadian)*(float)(Rad2Degree);
-	}
-	//è·Ÿæ–°ä¸Šä¸€ä¸ªæ—¶åˆ»ä½ç½® å’Œèˆªå‘è§’
-	fPrevTimeX = p.x;
-	fPrevTimeY = p.y;
-	fPrevTimeHeadingAngle = headingAngle;
-#endif
+	/** ----------------------------------- ´¿×·×ÙËã·¨ ---------------------------------- **/
+	// 2-2 | ¼ÆËã²Î¿¼Â·¾¶½Ç¶È£¬¼ÆËãÃé×¼½Ç¶È
+	fReferenceLineAngle = GetPointAngle(presPoint, nextPoint);			//(-180, 180]
+	fAimPointAngle = GetPointAngle(p, nextPoint);										//(-180, 180]
 
-	/** ----------------------------------- çº¯è¿½è¸ªç®—æ³• ----------------------------------- **/
-	//è®¡ç®—å‚è€ƒè·¯å¾„è§’åº¦ è®¡ç®—ç„å‡†çš„ç‚¹çš„è§’åº¦
-	float fReferenceLineAngle = GetPointAngle(prevPoint, nextPoint);
-	float fAimPointAngle = GetPointAngle(p, nextPoint);
-	
-	//è®¡ç®—èˆªå‘è§’è¯¯å·®
+	// 2-3 | ¼ÆËã½Ç¶ÈÎó²î
 	headingAngle = (headingAngle > 180.0f) ? headingAngle - 360.0f : ((headingAngle <= -180.0f) ? headingAngle + 360.0f : headingAngle);
-	float fHeadingAngleError = fReferenceLineAngle - headingAngle;
+	fHeadingAngleError = fReferenceLineAngle - headingAngle;
+
+	//Îó²î½Ç×ª»»³É[-180,180)
 	fHeadingAngleError = (fHeadingAngleError > 180.0f) ? fHeadingAngleError - 360.0f : ((fHeadingAngleError <= -180.0f) ? fHeadingAngleError + 360.0f : fHeadingAngleError);
-	status->fHeadingAngleError = fHeadingAngleError;
+	// 2-4	| ¼ÆËãºáÏòÎó²î
+	// 2-4-1| Í¨¹ı2¸ö²Î¿¼µã¼ÆËã²Î¿¼Ïß¶Î²ÎÊı
+	CountLinePara(presPoint, nextPoint, &referenceLine);
 	
-	//è®¡ç®—æ¨ªå‘è¯¯å·®
-	//ç¡®å®šå‚è€ƒå‚è€ƒçº¿æ®µçš„ä¿¡æ¯
-	lineInfo referenceLine;
-	CountLinePara(prevPoint, nextPoint, &referenceLine);
-	//è®¡ç®—ç‚¹åˆ°ç›´çº¿çš„è·ç¦»
+	// 2-4-1-1 | ¼ÆËãÕæÊµÎ»ÖÃ
 	status->fLateralError = CountPointLineDistance(p, referenceLine);
 	
-#ifdef CONTROLDELAY_ENABLE
-	// é¢„æµ‹æœªæ¥æ—¶åˆ»çš„ä½ç½®
+	// 2-4-2| ¼ÆËãÓÅ»¯ÒÔºóµÄµãµÄÎ»ÖÃ
+#ifdef ControlDelay
 	p.x = p.x + fDelayTimeChangeX;
 	p.y = p.y + fDelayTimeChangeY;
-	//è®¡ç®—æ–°çš„ç‚¹åˆ°ç›´çº¿çš„è·ç¦»
-	float fLateralError = CountPointLineDistance(p, referenceLine);
+	// 2-4-3| ¼ÆËãĞÂµÄºáÏòÎó²î
+	fLateralError = CountPointLineDistance(p, referenceLine);
 #else
-	// ç¡®å®šæ¨ªå‘è¯¯å·®çš„æ•°å€¼
-	float fLateralError = status->fLateralError;
+	fLateralError = status->fLateralError;
 #endif
-	//è½¬æ¢é»˜è®¤èˆªå‘è§’åˆ°[0-360)
+
+	// 2-4-4| ×ª»»³É¶ÔÓ¦µÄÕı¸º,¶¨ÒåºáÏòÎó²îµÄÕı¸º,ÔÚ³µÌåÑØ×Å¹æ»®Â·¾¶·½ÏòÓÒ²àÎªÕı
+	//×ª»»Ä¬ÈÏº½Ïò½Çµ½[0-360)
 	fReferenceLineAngle = (fReferenceLineAngle < 0.0f) ? fReferenceLineAngle + 360.0f : fReferenceLineAngle;
-	//ç¡®å®šæ¨ªå‘è¯¯å·®çš„ç¬¦å·
-	if (90.0f < fReferenceLineAngle  && fReferenceLineAngle <= 270.0f)
+	//µ±Ç°º½Ïò½Ç×ªµ½[0, 360)
+	headingAngle = (headingAngle < 0.0f) ? headingAngle + 360.0f : headingAngle;
+	//¼ÆËãºáÏòÎó²î
+	if (90.0f < fReferenceLineAngle && fReferenceLineAngle <= 270.0f)
 	{
 		fLateralError = -fLateralError;
-		status->fLateralError = -status->fHeadingAngleError;
+		status->fLateralError = -status->fLateralError;
 	}
-	
-	//è®¡ç®—å‰è§†è·ç¦»
-	//float fLookAheadDistance = fLookAheadDistanceFactor * speed;
-	float fLookAheadDistance = 4.0f;
-	
-	//è®¡ç®—è½¬å‘è§’åº¦
-	//æœŸæœ›è½¬å‘è§’
-	float fWheelSteeringAngle;
-	//å½“åç¦»çš„å¤ªå‰å®³çš„æ—¶å€™
+
+	// 2-5 | ¼ÆËãÇ°ÊÓ¾àÀë
+	//fLookAheadDistance = fLookAheadDistanceFactor * speed * fSamplePeriod * nSamplePointNum;
+	fLookAheadDistance = 4.0f;
+
+	// 2-6 | ¼ÆËã×ªÏò½Ç¶È
+	//µ±Æ«ÀëµÄÌ«À÷º¦µÄÊ±ºò
 	if (fabsf(fLateralError) > fLookAheadDistance)
 	{
-		//è®¡ç®—kæ—¶åˆ»çš„è½¬å¼¯åŠå¾„
-		fTurningRadius = CarWheelBearingDistance / tanf(MaxSwerveAngle*(float)Degree2Rad);
-		// è®¡ç®—è½¬å‘è§’åº¦
+		// 2-61| ¼ÆËã×ªÍä°ë¾¶
+		fTurningRadius = CarWheelBearingDistance / tanf(MaxSwerveAngle * Degree2Rad);
+		// 2-62| ¼ÆËã×ªÏò½Ç¶È
 		if (fabsf(fAimPointAngle - headingAngle) < 180.0f)
 		{
 			fWheelSteeringAngle = (fAimPointAngle < headingAngle) ? -MaxSwerveAngle : MaxSwerveAngle;
@@ -1008,33 +1041,35 @@ uint8_t autoRunPurePursuit(point3d p, float speed, float headingAngle, float sli
 			fWheelSteeringAngle = (fAimPointAngle < headingAngle) ? MaxSwerveAngle : -MaxSwerveAngle;
 		}
 	}
-	//åè½¬çš„ä¸æ˜¯å¾ˆå‰å®³
 	else
 	{
+		//	2-61| ¼ÆËã×ªÍä°ë¾¶
 #if ( __FPU_PRESENT==1 )
-		//è®¡ç®—å‰è§†è·ç¦»å’Œæ¨ªå‘è¯¯å·®çš„å¹³æ–¹å·®çš„æ ¹
-		arm_sqrt_f32(fLookAheadDistance*fLookAheadDistance - fLateralError * fLateralError, &fSqrtOut);
-		//è®¡ç®—è¯¯å·®è§’çš„sinå’Œcoså€¼
-		arm_sin_cos_f32(fHeadingAngleError, &fSinValue, &fCosValue);
-		//è®¡ç®—kæ—¶åˆ»çš„è½¬å‘åŠå¾„
-		fTurningRadius = 0.5f * (fLookAheadDistance*fLookAheadDistance) / (fLateralError*fCosValue + fSqrtOut*fSinValue);
+
+		//¼ÆËãÇ°ÊÓ¾àÀëºÍºáÏòÎó²îµÄÆ½·½²îµÄ¸ù
+		arm_sqrt_f32(fLookAheadDistance*fLookAheadDistance - fLateralError*fLateralError, &fSqrtOut);
+
+		//¼ÆËãÎó²î½ÇµÄsinºÍcosÖµ
+		arm_sin_cos_f32(fHeadingAngleError, &fsinOut, &fcosOut);
+
+		//¼ÆËã×ªÏò°ë¾¶
+		fTurningRadius = 0.5f * (fLookAheadDistance * fLookAheadDistance) / (fLateralError*fcosOut + fSqrtOut*fsinOut);
 #else
-		fTurningRadius = 0.5f * (fLookAheadDistance*fLookAheadDistance) / (fLateralError*cosf(fHeadingAngleError*(float)Degree2Rad) + sqrtf(fLookAheadDistance*fLookAheadDistance - fLateralError*fLateralError)*sinf(HeadingAngleError(float)Degree2Rad));
+		fTurningRadius = 0.5f * powf(fLookAheadDistance, 2) / (fLateralError*cosf(Degree2Rad*fHeadingAngleError) + sqrtf(fLookAheadDistance*fLookAheadDistance - fLateralError * fLateralError)*sinf(Degree2Rad*fHeadingAngleError));
 #endif
-		
-		//è®¡ç®—è½¬å‘è§’åº¦
-#ifdef SLIP_ENABLE	
-		fWheelSteeringAngle = atanf(CarWheelBearingDistance/fTurningRadius) * (float)Rad2Degree + fEquivalentSlipingAngle;
-#else
-		fWheelSteeringAngle = atanf(CarWheelBearingDistance/fTurningRadius) * (float)Rad2Degree;
-#endif
-		//å¦‚æœå¤ªå¤§å°±çº æ­£å›å»
-		fWheelSteeringAngle = (fWheelSteeringAngle > MaxSwerveAngle) ? MaxSwerveAngle : ((fWheelSteeringAngle < -MaxSwerveAngle) ? -MaxSwerveAngle : fWheelSteeringAngle);
-	}
+		//	2-72| ¼ÆËã×ªÏò½Ç¶È
+		fWheelSteeringAngle = atanf(CarWheelBearingDistance / fTurningRadius) * Rad2Degree;
+
+		//	2-73| Èç¹ûÌ«´ó¾Í¾ÀÕı»ØÈ¥
+//		fWheelSteeringAngle = (fWheelSteeringAngle > MaxSwerveAngle) ? MaxSwerveAngle : ((fWheelSteeringAngle < -MaxSwerveAngle) ? -MaxSwerveAngle : fWheelSteeringAngle);
 	
-	/*  4 | å°†ä¿¡æ¯è½¬åŒ–ä¸ºæ§åˆ¶ä¿¡æ¯å¹¶è¾“å‡º */
-	info->nDirection = (fabsf(fWheelSteeringAngle) < 2e-2f ) ? DIRECTION_STATUS_MID : (fWheelSteeringAngle > 0) ? DIRECTION_STATUS_LEFT : DIRECTION_STATUS_RIGHT;
-	info->nWheelSteeringAngle = (uint16_t)(fabsf(fWheelSteeringAngle *10.0f));
+	}
+	/* 3 | ÅĞ¶Ï×ªÍä·½ÏòºÍ½Ç¶È */
+	info->nDirection = (fabsf(fWheelSteeringAngle) < 2e-2f) ? DIRECTION_STATUS_MID : (fWheelSteeringAngle > 0) ? DIRECTION_STATUS_LEFT : DIRECTION_STATUS_RIGHT;
+	info->nWheelSteeringAngle = (uint16_t)(fabsf(fWheelSteeringAngle * 10.0f));
+
+	/* 4 | ·µ»Ø±ØÒªÊı¾İ */
+	status->fHeadingAngleError = fHeadingAngleError;
 	
 	return TRACKING_STATUS_NORMAL;
 }

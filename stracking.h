@@ -155,9 +155,6 @@
 
 #define MaxSwerveAngle 30.0f								//最大转向角
 
-//#define SLIP_ENABLE
-#define CONTROLDELAY_ENABLE
-
 /* Private Typedef ------------------------------------------------------------ */
 
 typedef struct SPoint3d 			point3d;
@@ -289,7 +286,9 @@ enum COMMAND_STATUS
 	COMMAND_STATUS_AFFECTSPEED,									//设置速度影响因子
 	COMMAND_STATUS_FIXEDSPEED,									//设置速度固定因子
 
-	COMMAND_STATUS_AUTORUN_STATUS               //自动运行的状态
+	COMMAND_STATUS_AUTORUN_STATUS,              //自动运行的状态
+	
+	COMMAND_STATUS_ERROR              					//出现错误
 };
 
 /* Private Function ---------------------------------------------------------- */
@@ -312,6 +311,8 @@ bool configureInitPathMemory(void);
 bool configureReferencePathMemory(void);		
 //添加初始路径
 bool addInitPoint(point3d p);
+//离线添加初始路径
+bool addInitPoints(point3d p1, point3d p2);
 //添加参考路径
 void AddReferencePoint(float x, float y, float z);
 //清除参考路径
@@ -334,8 +335,7 @@ void JWG2ENU(double j, double w, double g, point3d *enu);
 //生成参考路径
 uint8_t GenerateReferencePath(point3d p, float headingAngle);
 //purepursuit模型自动追踪
-uint8_t autoRunPurePursuit(point3d p, float speed, float headingAngle, float slipingAngle, float presentWheelSteeringRadius, command* info, trackStatus* status);
-
+uint8_t autoRunPurePursuit(point3d p, float speed, float headingAngle, command* info, trackStatus* statu);
 
 //追踪算法相关参数设置
 
