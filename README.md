@@ -3,7 +3,7 @@
 
 # 开发环境
 windows:x64 东南大学教育版<br>
-mdk:5.26.7<br>
+mdk:5.26.2<br>
 mdk-package:stm32f7-2.11.0<br>
 java:1.8.0_191<br>
 cubemx:4.27.0<br>
