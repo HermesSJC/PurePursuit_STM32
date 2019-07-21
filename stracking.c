@@ -4,7 +4,7 @@
 	* Description        : 这个文件包括了自动驾驶的函数实现
 	******************************************************************************
 	*
-	* COPYRIGHT(c) 2019-2020 东南大学-仪器科学与工程学院-石佳晨 (QQ:369348508)
+	* COPYRIGHT(c) 2017-2020 东南大学-仪器科学与工程学院-石佳晨 (QQ:369348508)
 	*
 	*
 	* 跟新日志 -------------------------------------------------------------------
@@ -61,25 +61,26 @@
 
 /* Private Variables ---------------------------------------------------------*/
 
-initList initPath;		//第一次行驶的路径
-referenceList referencePath;	//平移后的参考路径
+initList initPath;												//第一次行驶的路径
+referenceList referencePath;							//平移后的参考路径
 
-uint16_t nReferencePointIndex = 0;	//参考路径下标的序号
+uint16_t nReferencePointIndex = 0;				//参考路径下标的序号
 
-uint8_t nSamplePointNum = 5;		//采样点的个数
-float fSamplePeriod = 0.2f;		//采样时间(秒)
+uint8_t nSamplePointNum = 5;							//采样点的个数
+float fSamplePeriod = 0.2f;								//采样时间(秒)
 
-float fSpeedAffactedFactor = 0.15f;	//速度影响系数	
-float fSpeedFixedFactor = 0.05f;	//速度固定系数
+float fSpeedAffactedFactor = 0.15f;				//速度影响系数	
+float fSpeedFixedFactor = 0.05f;					//速度固定系数
 
-bool isLineArithmeticFlag = false;	//是否直线追踪
-bool isFirstPointFlag = false;		//是否第一个点
-bool isFirstMoveFlag = false;		//是否平移路径
+bool isLineArithmeticFlag = false;				//是否直线追踪
+bool isFirstPointFlag = false;						//是否第一个点
+bool isFirstMoveFlag = false;							//是否平移路径
 
-float fLookAheadDistanceFactor = 14.0f;	//前视距离系数
+float fLookAheadDistanceFactor = 14.0f;		//前视距离系数
 
-//#define ControlDelay //控制模型延时
-//#define SDebug       //stracking调试信息
+//#define ControlDelay	//控制模型延时
+//#define Sliping				//侧滑抑制
+//#define SDebug				//stracking调试信息
 
 /* Private Functions ---------------------------------------------------------*/
 
@@ -150,10 +151,9 @@ inline float GetPointAngle(point3d p1, point3d p2)
 void CountLinePara(point3d p1, point3d p2, lineInfo *l)
 {
 	
-	//如果斜率不存在
+	//如果斜率不存在 float无法直接比较 采用两数之差小雨float的精度即可
 	// p1.x == p2.x
-	//if( -1.0e-6f < p1.x-p2.x && p1.x-p2.x < 1.0e-6f )
-	if(p1.x == p2.x)
+	if( -1.0e-5f < p1.x-p2.x && p1.x-p2.x < 1.0e-5f )
 	{
 		l->A = 1.0f;
 		l->B = 0.0f;
@@ -464,13 +464,12 @@ void debugPrintInitPath(void)
 	
 	uint16_t i = 1;
 	printf("init path list:\r\n");
-	while(head->next != NULL)
+	while(head != NULL)
 	{
-		printf("point %3d is (%3.4f, %3.4f, %3.4f)\r\n",i, head->point.x, head->point.y, head->point.z);
+		printf("point %3d is (%f, %f, %f)\r\n",i, head->point.x, head->point.y, head->point.z);
 		i++;
 		head = head->next;
 	}
-	printf("point %3d is (%3.4f, %3.4f, %3.4f)\r\n",i, head->point.x, head->point.y, head->point.z);
 	printf("init path end:\r\n");
 	
 }
@@ -488,7 +487,7 @@ void debugPrintReferencePath(void)
 	printf("reference path list:\r\n");
 	for(uint16_t i = 0; i < referencePath.nSize; i++)
 	{
-		printf("point %3d is (%3.4f, %3.4f)\r\n",i + 1, (referencePath.point + i)->x, (referencePath.point + i)->y );
+		printf("point %3d is (%f, %f, %f)\r\n",i + 1, (referencePath.point + i)->x, (referencePath.point + i)->y, (referencePath.point + i)->z );
 	}
 	printf("reference path end:\r\n");
 }
