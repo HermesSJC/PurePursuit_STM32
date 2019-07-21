@@ -61,20 +61,20 @@
 
 /* Private Variables ---------------------------------------------------------*/
 
-initList initPath;						//第一次行驶的路径
+initList initPath;		//第一次行驶的路径
 referenceList referencePath;	//平移后的参考路径
 
 uint16_t nReferencePointIndex = 0;	//参考路径下标的序号
 
 uint8_t nSamplePointNum = 5;		//采样点的个数
-float fSamplePeriod = 0.2f;			//采样时间(秒)
+float fSamplePeriod = 0.2f;		//采样时间(秒)
 
-float fSpeedAffactedFactor = 0.15f;			//速度影响系数	
-float fSpeedFixedFactor = 0.05f;				//速度固定系数
+float fSpeedAffactedFactor = 0.15f;	//速度影响系数	
+float fSpeedFixedFactor = 0.05f;	//速度固定系数
 
-bool isLineArithmeticFlag = false;			//是否直线追踪
-bool isFirstPointFlag = false;					//是否第一个点
-bool isFirstMoveFlag = false;						//是否平移路径
+bool isLineArithmeticFlag = false;	//是否直线追踪
+bool isFirstPointFlag = false;		//是否第一个点
+bool isFirstMoveFlag = false;		//是否平移路径
 
 float fLookAheadDistanceFactor = 14.0f;	//前视距离系数
 
