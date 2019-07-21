@@ -1,6 +1,14 @@
 # PurePursuit_STM32
 基于STM32的PurePursuit算法的实现
 
+# 开发环境
+windows:x64 东南大学教育版<br>
+mdk:5.26.7<br>
+mdk-package:stm32f7-2.11.0<br>
+java:1.8.0_191<br>
+cubemx:4.27.0<br>
+cubemx-package:hal_stm32f7_1.12.0<br>
+
 # 命令指南
 COMMAND_STATUS<br>
 {<br>
@@ -32,6 +40,8 @@ COMMAND_STATUS<br>
 函数原型 bool configureInitPathMemory(void);<br>
 返回true  初始化成功<br>
 返回false 初始化失败<br>
+
+
 
 # 修改历史
 
