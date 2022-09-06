@@ -1,131 +1,15 @@
 /**
-	******************************************************************************
-	* File Name          : stracking.h
-	* Description        : Õâ¸öÎÄ¼ş°üÀ¨ÁË×Ô¶¯¼İÊ»ËùĞèµÄÒ»ÇĞ¶¨ÒåºÍº¯ÊıÉêÃ÷
-	******************************************************************************
-	*
-	* COPYRIGHT(c) 2017-2020 ¶«ÄÏ´óÑ§-ÒÇÆ÷¿ÆÑ§Óë¹¤³ÌÑ§Ôº-Ê¯¼Ñ³¿ (QQ:369348508)
-	*
-	* apiËµÃ÷ÎÄµµ
-	*
-	* ----------------------------------------------------------------------------
-	*
-	* 01-ÅäÖÃ³õÊ¼Â·¾¶µÄ¶¯Ì¬ÄÚ´æ·ÖÅä
-	* º¯ÊıÔ­ĞÍ bool configureInitPathMemory(void);	
-	* ·µ»Øtrue  ³õÊ¼»¯³É¹¦
-	* ·µ»Øfalse ³õÊ¼»¯Ê§°Ü
-	*
-	* ----------------------------------------------------------------------------
-	*
-	* 02-ÅäÖÃ²Î¿¼Â·¾¶µÄ¶¯Ì¬ÄÚ´æ·ÖÅä
-	* º¯ÊıÔ­ĞÍ bool configureReferencePathMemory(void)
-	* ·µ»Øtrue  ³õÊ¼»¯³É¹¦
-	* ·µ»Øfalse ³õÊ¼»¯Ê§°Ü
-	*
-	* ----------------------------------------------------------------------------
-	*
-	* 03-Çå³ı²Î¿¼Â·¾¶
-	* º¯ÊıÔ­ĞÍ void clearReferencePath(void);
-	*
-	* ----------------------------------------------------------------------------
-	*
-	* 04-Çå³ı³õÊ¼Â·¾¶
-	* º¯ÊıÔ­ĞÍ void clearInitPath(void);		
-	*
-	* ----------------------------------------------------------------------------
-	*
-	* 05-Ìí¼ÓµÚÒ»´ÎÈË¹¤ĞĞ×ßµÄ²Î¿¼µã
-	* º¯ÊıÔ­ĞÍ bool addInitPoint(point3d p);
-	* ÊäÈë²ÎÊı [point3d] ¶«±±Ìì×ø±êÏµµÄµã
-	* ·µ»Øtrue  Ìí¼Ó³É¹¦
-	* ·µ»Øfalse Ìí¼ÓÊ§°Ü
-	*
-	* ----------------------------------------------------------------------------
-	*
-	* 06-×ª»»³õÊ¼º½Ïò½Ç
-	* º¯ÊıÔ­ĞÍ float changeCourseAngle(float angle);
-	* ÊäÈë²ÎÊı Ô­Ê¼º½Ïò½Ç
-	* ·µ»Ø²ÎÊı ×ª»»ÒÔºóµÄº½Ïò½Ç
-	*
-	* ----------------------------------------------------------------------------
-	*
-	* 07-×ª»»×ø±êÏµ
-	* º¯ÊıÔ­ĞÍ void JWG2ENU(double j,double w,double g, point3d *p);
-	* ÊäÈë²ÎÊı doubleÀàĞÍ ÒÀ´Î ¾­¶È Î¬¶È ¸ß¶È£¨¶È£¬¶È£¬Ã×£©
-	* Êä³ö²ÎÊı ×ª»»Íê±ÏÒÔºó pointÀàĞÍµãµÄµØÖ· ×ø±êÏµ ¶« ±± Ìì£¨Ã×£¬Ã×£¬Ã×£©
-	*
-	* ----------------------------------------------------------------------------
-	* 
-	* 08-×Ô¶¯ÔËĞĞ
-	* º¯ÊıÔ­ĞÍ int autoRunPurePursuit(point3d p, float speed, float courseAngle, command *info, trackStatus *status);
-	* ÊäÈë²ÎÊı pointÀàĞÍµÄ¶«±±Ìì×ø±êÏµµÄµã£¨Ã×£¬Ã×£¬Ã×£©£¬ËÙ¶È£¨Ã×/Ãë£©£¬×ª»»ºóµÄº½Ïò½Ç£¨¶È£©
-	* Êä³ö²ÎÊı commandÀàĞÍµÄ infoµÄµØÖ·
-	*           command::nDirection  |- ·½Ïò
-	*						|- DIRECTION_MID      ÖĞ¼ä
-	*						|- DIRECTION_LEFT			×ó×ª
-	*						|- DIRECTION_RIGHT		ÓÒ×ª
-	*						command::nSwerveAngle |- ÆÚÍû×ªÏò½Ç£¨0.1¶È£©
-	*					 trackStatusÀàĞÍµÄ statusµÄµØÖ·
-	*	 				  trackStatus::fLateral ºáÏòÎó²î
-	*           trackStatus::fheadingAngleError º½ÏòÎó²î
-	* ·µ»Ø²ÎÊı  |------TRACKING_STATUS_NORMAL               Õı³£ÔËĞĞ
-	*           |------TRACKING_STATUS_NO_ENOUGH_POINTS     Ã»ÓĞ×ã¹»µã
-	*           |------TRACKING_STATUS_NO_MEMORY						Ã»ÓĞÄÚ´æ gg
-	*						|------TRACKING_STATUS_TO_THE_END						×ßµ½µ×
-	*
-	* ----------------------------------------------------------------------------
-	*
-	* 09-ÉèÖÃÊÇ·ñĞèÒª½øĞĞÆ½ÒÆÂ·¾¶
-	* º¯ÊıÔ­ĞÍ void setFirstMove(bool status);
-  * ÊäÈëtrue  ÏÂÒ»¸öµã»á³ÉÎªÆ½ÒÆÔ¤ÉèÂ·¾¶µÄ²Î¿¼µã 
-	*           ++ ¾¯¸æ£º»áÖØÖÃÖ®Ç°µÄÔ¤ÉèÂ·¾¶ºÍ²Î¿¼Â·¾¶ºÍ²Î¿¼µã
-	* ÊäÈëfalse ÏÂÒ»¸öµãÈ¡Ïû³ÉÎªÆ½ÒÆÔ¤ÉèÂ·¾¶µÄ²Î¿¼µã 
-	*
-	* ----------------------------------------------------------------------------
-	*
-	* 10-ÉèÖÃÊÇ·ñÒª°ÑÏÂÒ»¸öµãÉèÖÃÎª¶«±±Ìì×ø±êÏµµÄÔ­µã
-	* º¯ÊıÔ­ĞÍ void setFirstPoint(bool status);
-	* ÊäÈëtrue  ÏÂÒ»¸öµã»á³ÉÎª¶«±±Ìì×ø±êÏµµÄÔ­µã 
-	*           ++ ¾¯¸æ£º»áÖØÖÃÖ®Ç°µÄ×ø±êÏµµÄÔ­µã
-	* ÊäÈëfalse ÏÂÒ»¸öµãÈ¡Ïû³ÉÎª¶«±±Ìì×ø±êÏµµÄÔ­µã
-	*
-	* ----------------------------------------------------------------------------
-	* 
-	* 11-ÉèÖÃ²ÉÑùÖÜÆÚºÍ²Î¿¼µã¸öÊı
-	* º¯ÊıÔ­ĞÍ void setSamplingPeriod(uint8_t samplingPeriod);
-	* ÊäÈë²ÎÊı ²ÉÑùÖÜÆÚ µ¥Î»£ººÕ×È£¨hz£©
-	*
-	* ----------------------------------------------------------------------------
-	* 
-	* 12-ÉèÖÃÇ°ÊÓ¾àÀëÏµÊı
-	* º¯ÊıÔ­ĞÍ void setSightDistanceFactor(uint8_t factor);
-  * ÊäÈë²ÎÊı Ç°ÊÓ¾àÀëÏµÊı µ¥Î»£ºÎŞÁ¿¸Ù
-	* 
-	* ----------------------------------------------------------------------------
-	* 
-	* 13-ÉèÖÃÖ±Ïß»òÕßÏß¶Î×·×Ù
-	* º¯ÊıÔ­ĞÍ void setLineArithmetic(bool status);
-	* ÊäÈëtrue  Ö±Ïß×·×ÙËã·¨ 
-	* ÊäÈëfalse Ïß¶Î×·×ÙËã·¨
-	* 
-	* ----------------------------------------------------------------------------
-	*
-	* 14-ÉèÖÃËÙ¶ÈÓ°ÏìÏµÊı	
-	* º¯ÊıÔ­ĞÍ void setSpeedAffactedFactor(uint8_t factor);
-  * ÊäÈë²ÎÊı ËÙ¶ÈÓ°ÏìÏµÊı	 µ¥Î»£ºÎŞÁ¿¸Ù
-	*
-	* ----------------------------------------------------------------------------
-	*
-	* 15-ÉèÖÃËÙ¶È¹Ì¶¨ÏµÊı
-	* º¯ÊıÔ­ĞÍ void setSpeedFixedFactor(uint8_t factor);
-  * ÊäÈë²ÎÊı ËÙ¶È¹Ì¶¨ÏµÊı µ¥Î»£ºÎŞÁ¿¸Ù
-	* ----------------------------------------------------------------------------
-	*
-	* ###### WARNING ######
-	* Çë²»Òªµ÷ÓÃ³ıÁËÉÏÊöAPIÒÔÍâµÄAPI
-	*
-  ******************************************************************************
-*/
+ ******************************************************************************
+ * File Name          : stracking.h
+ * Description        : è¿™ä¸ªæ–‡ä»¶åŒ…æ‹¬äº†è‡ªåŠ¨é©¾é©¶æ‰€éœ€çš„ä¸€åˆ‡å®šä¹‰å’Œå‡½æ•°ç”³æ˜
+ ******************************************************************************
+ *
+ * COPYRIGHT(c) 2017-2020 ä¸œå—å¤§å­¦-ä»ªå™¨ç§‘å­¦ä¸å·¥ç¨‹å­¦é™¢-çŸ³ä½³æ™¨ (QQ:369348508)
+ *
+ * apiè¯´æ˜æ–‡æ¡£
+ *
+ ******************************************************************************
+ */
 
 #ifndef __STRACKING_H
 #define __STRACKING_H
@@ -136,40 +20,40 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
-#if (__FPU_PRESENT == 1)			
-#include <arm_math.h>			//Èç¹ûÊ¹ÄÜÁËÓ²¼ş¸¡µã¹¦ÄÜ£¬¾Í°üÀ¨Ó²¼ş¸¡µãÊıÑ§¿â
+#if (__FPU_PRESENT == 1)
+#include <arm_math.h> //å¦‚æœä½¿èƒ½äº†ç¡¬ä»¶æµ®ç‚¹åŠŸèƒ½ï¼Œå°±åŒ…æ‹¬ç¡¬ä»¶æµ®ç‚¹æ•°å­¦åº“
 #else
-#include <math.h>					//Èç¹ûÃ»Ê¹ÄÜÓ²¼ş¸¡µã¹¦ÄÜ£¬¾Í°üÀ¨ÆÕÍ¨ÊıÑ§¿â
+#include <math.h> //å¦‚æœæ²¡ä½¿èƒ½ç¡¬ä»¶æµ®ç‚¹åŠŸèƒ½ï¼Œå°±åŒ…æ‹¬æ™®é€šæ•°å­¦åº“
 #endif
 
 /* Private Define  ------------------------------------------------------------ */
 
-#define FE_WGS84	0.00335281066474748049		//WGS84Æ«ĞÄÂÊ
-#define RE_WGS84	6378137.0									//WGS84µØÇò°ë¾¶
-#define e					0.006694379990141316461		//×ª»»³£Êı
+#define FE_WGS84 0.00335281066474748049 // WGS84åå¿ƒç‡
+#define RE_WGS84 6378137.0				// WGS84åœ°çƒåŠå¾„
+#define e 0.006694379990141316461		//è½¬æ¢å¸¸æ•°
 
-#define Degree2Rad	0.01745329251994327813	//½Ç¶È×ª»¡¶È
-#define Rad2Degree	57.29577951308237971		//»¡¶È×ª½Ç¶È
+#define Degree2Rad 0.01745329251994327813 //è§’åº¦è½¬å¼§åº¦
+#define Rad2Degree 57.29577951308237971	  //å¼§åº¦è½¬è§’åº¦
 
-#define CarWheelBearingDistance 3.71f				//Öá¾à
+#define CarWheelBearingDistance 3.71f //è½´è·
 
-#define MaxSwerveAngle 30.0f								//×î´ó×ªÏò½Ç
+#define MaxSwerveAngle 30.0f //æœ€å¤§è½¬å‘è§’
 
 /* Private Typedef ------------------------------------------------------------ */
 
-typedef struct SPoint3d 			point3d;
-typedef struct SInitNode 			initNode;
-typedef struct SInitList 			initList;
-typedef struct SReferenceList	referenceList;
-typedef struct SCommmand			command;
-typedef struct SLineInfo			lineInfo;
-typedef struct STrackStatus		trackStatus;
+typedef struct SPoint3d point3d;
+typedef struct SInitNode initNode;
+typedef struct SInitList initList;
+typedef struct SReferenceList referenceList;
+typedef struct SCommmand command;
+typedef struct SLineInfo lineInfo;
+typedef struct STrackStatus trackStatus;
 
 /* Private Struct ------------------------------------------------------------- */
 
 /**
-* @brief ¶¨ÒåÒ»¸öÈıÎ¬µÄµã
-*/
+ * @brief å®šä¹‰ä¸€ä¸ªä¸‰ç»´çš„ç‚¹
+ */
 struct SPoint3d
 {
 	float x;
@@ -178,37 +62,37 @@ struct SPoint3d
 };
 
 /**
-* @brief ¶¨ÒåÒ»¸öË«ÏòÁ´±íµÄ½áµã ×÷Îª³õÊ¼»¯Â·¾¶µÄµã
-*/
+ * @brief å®šä¹‰ä¸€ä¸ªåŒå‘é“¾è¡¨çš„ç»“ç‚¹ ä½œä¸ºåˆå§‹åŒ–è·¯å¾„çš„ç‚¹
+ */
 struct SInitNode
 {
-	struct SInitNode *prev;		//Ç°Ò»¸ö½áµãµÄµØÖ·
-	struct SPoint3d point;		//Â·¾¶µã
-	struct SInitNode *next;		//ºóÒ»¸ö½áµãµÄµØÖ·
+	struct SInitNode *prev; //å‰ä¸€ä¸ªç»“ç‚¹çš„åœ°å€
+	struct SPoint3d point;	//è·¯å¾„ç‚¹
+	struct SInitNode *next; //åä¸€ä¸ªç»“ç‚¹çš„åœ°å€
 };
 
 /**
-* @brief ¶¨ÒåÒ»¸ö°üº¬ÁËË«ÏòÁ´±íĞÅÏ¢µÄ½á¹¹Ìå ×÷Îª³õÊ¼»¯Â·¾¶
-*/
+ * @brief å®šä¹‰ä¸€ä¸ªåŒ…å«äº†åŒå‘é“¾è¡¨ä¿¡æ¯çš„ç»“æ„ä½“ ä½œä¸ºåˆå§‹åŒ–è·¯å¾„
+ */
 struct SInitList
 {
-	struct SInitNode *head;		//Í·½áµã
-	struct SInitNode *tail;		//Î²½áµã
-	uint16_t nSize;						//³¤¶È
+	struct SInitNode *head; //å¤´ç»“ç‚¹
+	struct SInitNode *tail; //å°¾ç»“ç‚¹
+	uint16_t nSize;			//é•¿åº¦
 };
 
 /**
-* @brief ¶¨ÒåÒ»¸ö¼òµ¥µÄ¿É±äÊı×éµÄ½á¹¹Ìå ×÷Îª²Î¿¼Â·¾¶
-*/
+ * @brief å®šä¹‰ä¸€ä¸ªç®€å•çš„å¯å˜æ•°ç»„çš„ç»“æ„ä½“ ä½œä¸ºå‚è€ƒè·¯å¾„
+ */
 struct SReferenceList
 {
-	struct SPoint3d *point;	//Â·¾¶µã
-	uint16_t nSize;					//³¤¶È
+	struct SPoint3d *point; //è·¯å¾„ç‚¹
+	uint16_t nSize;			//é•¿åº¦
 };
 
 /**
-* @brief ¶¨ÒåÃüÁî
-*/
+ * @brief å®šä¹‰å‘½ä»¤
+ */
 struct SCommmand
 {
 	int nDirection;
@@ -216,8 +100,8 @@ struct SCommmand
 };
 
 /**
-* @brief ¶¨ÒåÂ·¾¶×·×ÙµÄ²¿·Ö×´Ì¬
-*/
+ * @brief å®šä¹‰è·¯å¾„è¿½è¸ªçš„éƒ¨åˆ†çŠ¶æ€
+ */
 struct STrackStatus
 {
 	float fLateralError;
@@ -225,8 +109,8 @@ struct STrackStatus
 };
 
 /**
-* @brief Ö±ÏßµÄĞÅÏ¢
-*/
+ * @brief ç›´çº¿çš„ä¿¡æ¯
+ */
 struct SLineInfo
 {
 	float A;
@@ -237,122 +121,120 @@ struct SLineInfo
 /* Private Enum -------------------------------------------------------------- */
 
 /**
-* @brief ¶¨Òå·½Ïò
-*/
+ * @brief å®šä¹‰æ–¹å‘
+ */
 enum DIRECTION_STATUS
 {
-	DIRECTION_STATUS_MID = 0x00,		//Ö±ĞĞ
-	DIRECTION_STATUS_LEFT,					//×ó×ª
-	DIRECTION_STATUS_RIGHT					//ÓÒ×ª
+	DIRECTION_STATUS_MID = 0x00, //ç›´è¡Œ
+	DIRECTION_STATUS_LEFT,		 //å·¦è½¬
+	DIRECTION_STATUS_RIGHT		 //å³è½¬
 };
 
 /**
-* @brief ¶¨Òå×·×Ù×´Ì¬
-*/
+ * @brief å®šä¹‰è¿½è¸ªçŠ¶æ€
+ */
 enum TRACKING_STATUS
 {
-	TRACKING_STATUS_NORMAL = 0x00,			//Õı³£
+	TRACKING_STATUS_NORMAL = 0x00, //æ­£å¸¸
 	TRACKING_STATUS_NO_ENOUGH_POINTS,
 	TRACKING_STATUS_NO_MEMORY,
 	TRACKING_STATUS_TO_THE_END
 };
 
 /**
-* @brief ÃüÁîÖ¸Áî×´Ì¬
-*/
+ * @brief å‘½ä»¤æŒ‡ä»¤çŠ¶æ€
+ */
 
 enum COMMAND_STATUS
 {
-	COMMAND_STATUS_NO_COMMAND = 0x00,						//Ã»ÓĞÖ¸Áî
+	COMMAND_STATUS_NO_COMMAND = 0x00, //æ²¡æœ‰æŒ‡ä»¤
 
-	COMMAND_STATUS_IS_RUN,											//Ç¿ÖÆ¿ªÊ¼»òÕßÇ¿ÖÆÍ£Ö¹
-	COMMAND_STATUS_IS_RECORD,                   //ÊÇ·ñ¼ÇÂ¼Êı¾İ Èç¹ûÊÇµÄ»° ÏÂÒ»¸öÊı¾İ»á±»ÈÏÎª×ø±êÔ­µã
-	COMMAND_STATUS_IS_AUTORUN,                  //ÊÇ·ñ×Ô¶¯ÔËĞĞ Èç¹ûÊÇµÄ»° ÏÂÒ»¸öµã»á±»×÷ÎªÆ½ÒÆÂ·¾¶µÄ²Î¿¼µã
-	COMMAND_STATUS_IS_INIT,                     //ÊÇ·ñ³õÊ¼»¯Â·¾¶ Èç¹ûÊÇµÄ»° ¿ªÊ¼³õÊ¼»¯Â·¾¶£¬²¢¸²¸ÇµôÖ®Ç°µÄ×ø±êµã
-	COMMAND_STATUS_IS_ADJUST,                   //ÊÇ·ñ×óÓÒ½ÃÕı
-	COMMAND_STATUS_IS_LINE,											//ÊÇ·ñÖ±Ïß
-	COMMAND_STATUS_IS_TURN,											//ÊÇ·ñ×ªÏò
-	COMMAND_STATUS_IS_SLAVE,										//ÊÇ·ñÏÂÎ»»ú¼ÆËã
+	COMMAND_STATUS_IS_RUN,	   //å¼ºåˆ¶å¼€å§‹æˆ–è€…å¼ºåˆ¶åœæ­¢
+	COMMAND_STATUS_IS_RECORD,  //æ˜¯å¦è®°å½•æ•°æ® å¦‚æœæ˜¯çš„è¯ ä¸‹ä¸€ä¸ªæ•°æ®ä¼šè¢«è®¤ä¸ºåæ ‡åŸç‚¹
+	COMMAND_STATUS_IS_AUTORUN, //æ˜¯å¦è‡ªåŠ¨è¿è¡Œ å¦‚æœæ˜¯çš„è¯ ä¸‹ä¸€ä¸ªç‚¹ä¼šè¢«ä½œä¸ºå¹³ç§»è·¯å¾„çš„å‚è€ƒç‚¹
+	COMMAND_STATUS_IS_INIT,	   //æ˜¯å¦åˆå§‹åŒ–è·¯å¾„ å¦‚æœæ˜¯çš„è¯ å¼€å§‹åˆå§‹åŒ–è·¯å¾„ï¼Œå¹¶è¦†ç›–æ‰ä¹‹å‰çš„åæ ‡ç‚¹
+	COMMAND_STATUS_IS_ADJUST,  //æ˜¯å¦å·¦å³çŸ«æ­£
+	COMMAND_STATUS_IS_LINE,	   //æ˜¯å¦ç›´çº¿
+	COMMAND_STATUS_IS_TURN,	   //æ˜¯å¦è½¬å‘
+	COMMAND_STATUS_IS_SLAVE,   //æ˜¯å¦ä¸‹ä½æœºè®¡ç®—
 
-	COMMAND_STATUS_SET_SAMPLINGPERIOD,					//ÉèÖÃ²ÉÑùÖÜÆÚ
-	COMMAND_STATUS_SET_SIGHTDISTANCE_FACTOR,		//ÉèÖÃÇ°ÊÓ¾àÀëÏµÊı
-	COMMAND_STATUS_SET_KP,                     	//·¢ËÍPID²ÎÊıP
-  COMMAND_STATUS_SET_KI,                     	//·¢ËÍPID²ÎÊıI
-  COMMAND_STATUS_SET_KD,                     	//·¢ËÍPID²ÎÊıD
-	
-	COMMAND_STATUS_AUTOSET_MIDANGLE,            //×Ô¶¯ÉèÖÃÖĞÎ»½Ç
-	COMMAND_STATUS_AUTOSET_PWMPID,              //×Ô¶¯ÉèÖÃ½Ç¶È¸úËæµÄpidÖµ
-	
-	COMMAND_STATUS_AFFECTSPEED,									//ÉèÖÃËÙ¶ÈÓ°ÏìÒò×Ó
-	COMMAND_STATUS_FIXEDSPEED,									//ÉèÖÃËÙ¶È¹Ì¶¨Òò×Ó
+	COMMAND_STATUS_SET_SAMPLINGPERIOD,		 //è®¾ç½®é‡‡æ ·å‘¨æœŸ
+	COMMAND_STATUS_SET_SIGHTDISTANCE_FACTOR, //è®¾ç½®å‰è§†è·ç¦»ç³»æ•°
+	COMMAND_STATUS_SET_KP,					 //å‘é€PIDå‚æ•°P
+	COMMAND_STATUS_SET_KI,					 //å‘é€PIDå‚æ•°I
+	COMMAND_STATUS_SET_KD,					 //å‘é€PIDå‚æ•°D
 
-	COMMAND_STATUS_AUTORUN_STATUS,              //×Ô¶¯ÔËĞĞµÄ×´Ì¬
-	
-	COMMAND_STATUS_ERROR              					//³öÏÖ´íÎó
+	COMMAND_STATUS_AUTOSET_MIDANGLE, //è‡ªåŠ¨è®¾ç½®ä¸­ä½è§’
+	COMMAND_STATUS_AUTOSET_PWMPID,	 //è‡ªåŠ¨è®¾ç½®è§’åº¦è·Ÿéšçš„pidå€¼
+
+	COMMAND_STATUS_AFFECTSPEED, //è®¾ç½®é€Ÿåº¦å½±å“å› å­
+	COMMAND_STATUS_FIXEDSPEED,	//è®¾ç½®é€Ÿåº¦å›ºå®šå› å­
+
+	COMMAND_STATUS_AUTORUN_STATUS, //è‡ªåŠ¨è¿è¡Œçš„çŠ¶æ€
+
+	COMMAND_STATUS_ERROR //å‡ºç°é”™è¯¯
 };
 
 /* Private Function ---------------------------------------------------------- */
-//»ù±¾ËãÊıÔËËã
+//åŸºæœ¬ç®—æ•°è¿ç®—
 
-//ÇóÁ½¸öÊıµÄËãÊıÆ½·½¸ù
+//æ±‚ä¸¤ä¸ªæ•°çš„ç®—æ•°å¹³æ–¹æ ¹
 float GetArithmeticSquareRoot(float n1, float n2);
-//ÇóµÚÒ»¸öµãµ½µÚ¶ş¸öµãµÄ½Ç¶È
+//æ±‚ç¬¬ä¸€ä¸ªç‚¹åˆ°ç¬¬äºŒä¸ªç‚¹çš„è§’åº¦
 float GetPointAngle(point3d p1, point3d p2);
-//Í¨¹ıÁ½µã¼ÆËãÖ±Ïß²ÎÊı
+//é€šè¿‡ä¸¤ç‚¹è®¡ç®—ç›´çº¿å‚æ•°
 void CountLinePara(point3d p1, point3d p2, lineInfo *l);
-//¼ÆËãµãµ½Ö±ÏßµÄ¾àÀë
+//è®¡ç®—ç‚¹åˆ°ç›´çº¿çš„è·ç¦»
 float CountPointLineDistance(point3d p, lineInfo l);
 
-//¶ÔÂ·¾¶µÄ»ù±¾²Ù×÷
+//å¯¹è·¯å¾„çš„åŸºæœ¬æ“ä½œ
 
-//³õÊ¼»¯³õÊ¼Â·¾¶µÄµØÖ··ÖÅä
-bool configureInitPathMemory(void);				
-//³õÊ¼»¯²Î¿¼Â·¾¶µÄµØÖ··ÖÅä
-bool configureReferencePathMemory(void);		
-//Ìí¼Ó³õÊ¼Â·¾¶
+//åˆå§‹åŒ–åˆå§‹è·¯å¾„çš„åœ°å€åˆ†é…
+bool configureInitPathMemory(void);
+//åˆå§‹åŒ–å‚è€ƒè·¯å¾„çš„åœ°å€åˆ†é…
+bool configureReferencePathMemory(void);
+//æ·»åŠ åˆå§‹è·¯å¾„
 bool addInitPoint(point3d p);
-//ÀëÏßÌí¼Ó³õÊ¼Â·¾¶
+//ç¦»çº¿æ·»åŠ åˆå§‹è·¯å¾„
 bool addInitPoints(point3d p1, point3d p2);
-//Ìí¼Ó²Î¿¼Â·¾¶
+//æ·»åŠ å‚è€ƒè·¯å¾„
 void AddReferencePoint(float x, float y, float z);
-//Çå³ı²Î¿¼Â·¾¶
-void clearReferencePath(void);					
-//Çå³ı³õÊ¼Â·¾¶
+//æ¸…é™¤å‚è€ƒè·¯å¾„
+void clearReferencePath(void);
+//æ¸…é™¤åˆå§‹è·¯å¾„
 void clearInitPath(void);
-//debug³õÊ¼Â·¾¶
+// debugåˆå§‹è·¯å¾„
 void debugPrintInitPath(void);
-//debug²Î¿¼Â·¾¶
+// debugå‚è€ƒè·¯å¾„
 void debugPrintReferencePath(void);
 
+//å§¿æ€å‚æ•°è®¾ç½®
 
-//×ËÌ¬²ÎÊıÉèÖÃ
-
-//×ª»»³õÊ¼º½Ïò½Ç
+//è½¬æ¢åˆå§‹èˆªå‘è§’
 float changeCourseAngle(float angle);
-//µ¼º½×ø±êÏµµÄ×ª»»
+//å¯¼èˆªåæ ‡ç³»çš„è½¬æ¢
 void JWG2ENU(double j, double w, double g, point3d *enu);
 
-//Éú³É²Î¿¼Â·¾¶
+//ç”Ÿæˆå‚è€ƒè·¯å¾„
 uint8_t GenerateReferencePath(point3d p, float headingAngle);
-//purepursuitÄ£ĞÍ×Ô¶¯×·×Ù
-uint8_t autoRunPurePursuit(point3d p, float speed, float headingAngle, command* info, trackStatus* statu);
+// purepursuitæ¨¡å‹è‡ªåŠ¨è¿½è¸ª
+uint8_t autoRunPurePursuit(point3d p, float speed, float headingAngle, command *info, trackStatus *statu);
 
-//×·×ÙËã·¨Ïà¹Ø²ÎÊıÉèÖÃ
+//è¿½è¸ªç®—æ³•ç›¸å…³å‚æ•°è®¾ç½®
 
-//ÉèÖÃÖ±ÏßorÏß¶Î×·×Ù
+//è®¾ç½®ç›´çº¿orçº¿æ®µè¿½è¸ª
 void setLineArithmetic(bool arithmetic);
-//ÉèÖÃÊÇ·ñµÚÒ»¸öµã ÓÃÀ´³õÊ¼»¯×ø±êÔ­µã
+//è®¾ç½®æ˜¯å¦ç¬¬ä¸€ä¸ªç‚¹ ç”¨æ¥åˆå§‹åŒ–åæ ‡åŸç‚¹
 void setFirstPoint(bool flag);
-//ÉèÖÃÊÇ·ñÆ½ÒÆÂ·¾¶
+//è®¾ç½®æ˜¯å¦å¹³ç§»è·¯å¾„
 void setFirstMove(bool statu);
-//ÉèÖÃ²ÉÑùÆµÂÊ
+//è®¾ç½®é‡‡æ ·é¢‘ç‡
 void setSamplingPeriod(uint8_t period);
-//ÉèÖÃËÙ¶ÈÓ°ÏìÏµÊı	
+//è®¾ç½®é€Ÿåº¦å½±å“ç³»æ•°
 void setSpeedAffactedFactor(uint8_t factor);
-//ÉèÖÃËÙ¶È¹Ì¶¨ÏµÊı
+//è®¾ç½®é€Ÿåº¦å›ºå®šç³»æ•°
 void setSpeedFixedFactor(uint8_t factor);
-//ÉèÖÃÇ°ÊÓ¾àÀëÏµÊı
+//è®¾ç½®å‰è§†è·ç¦»ç³»æ•°
 void setLookAheadDistanceFactor(uint8_t factor);
 
-
-#endif	// END OF FILE
+#endif // END OF FILE
