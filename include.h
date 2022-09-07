@@ -6,7 +6,6 @@ extern "C"
 {
 #endif
 
-/* Private Define  ------------------------------------------------------------ */
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -19,7 +18,6 @@ extern "C"
 #include <math.h>
 #endif
 
-/* Private Define  ------------------------------------------------------------ */
 // WGS84偏心率
 #define FE_WGS84 0.00335281066474748049
 // WGS84地球半径
@@ -38,15 +36,12 @@ extern "C"
     enum STATUS
     {
         OK = 0x00,
-        ERROR = -0x01
+        NULL_POINT_ERROR,
 
     };
 
-    /* Private Typedef ------------------------------------------------------------ */
     typedef struct SPoint3d point3d;
     typedef struct SPoint3df point3df;
-
-    /* Private Struct ------------------------------------------------------------- */
 
     /**
      * @brief 定义一个三维的点 float类型
@@ -59,7 +54,7 @@ extern "C"
     };
 
     /**
-     * @brief 定义一个三维的点
+     * @brief 定义一个三维的点 double类型
      */
     struct SPoint3d
     {

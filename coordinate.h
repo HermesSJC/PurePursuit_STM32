@@ -6,10 +6,8 @@ extern "C"
 {
 #endif
 
-    /* Private Include ------------------------------------------------------------ */
 #include "include.h"
 
-    /* Private Enum -------------------------------------------------------------- */
     /**
      * @brief 定义转换的模式
      */
@@ -21,13 +19,13 @@ extern "C"
         JGW2ENU = 0x01
     };
 
-    /* Private Function ---------------------------------------------------------- */
-    //转换
-    int8_t change(point3d in, point3d *out);
+    uint8_t change(point3d, point3d *);
 
     void setChangeMode(uint8_t mode);
 
-    uint8_t getChangeMode(void);
+    point3df double2float(point3d);
+
+    point3d float2double(point3df);
 
 #ifdef __cplusplus
 }
